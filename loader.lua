@@ -128,7 +128,7 @@ shoptab:CreateDropdown({
 })
 shoptab:CreateDropdown({
     Name = "Plant Gear to buy",
-    Options = {},
+    Options = {table.unpack(plantgearlist), "all"},
     Multi = false,
     Callback = function(v) 
         print(v)

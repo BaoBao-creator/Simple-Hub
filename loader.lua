@@ -11,10 +11,17 @@ local humanoid = character:WaitForChild("Humanoid")
 
 -- Shop variables
 local buying = false
-local seedlist 
-local gearlist = {"Master Sprinkler", "Grandmaster Sprinkler", "Godly Sprinkler", "Medium Toy", "Medium Treat", "Levelup Lollipop", "Advanced Sprinkler", "Watering Can", "Basic Sprinkler"}
+local commonseedlist = {"Carrot", "Strawberry"}
+local uncommonseedlist = {"Blueberry", "Orange Tulip"}
+local rareseedlist = {"Tomato", "Corn", "Daffodil"}
+local legendaryseedlist = {"Watermelon", "Pumpkin", "Apple", "Bamboo"}
+local mythicalseedlist = {"Coconut", "Cactus", "Dragon Fruit", "Mango"}
+local divineseedlist = {"Grape", "Mushroom", "Pepper", "Cacao"}
+local prismaticslist = {"Beanstalk", "Ember Lily", "Sugar Apple", "Burning Bud", "Giant Pinecone", "Elder Strawberry"}
+local orthergearlist = {"Trading Ticket", "Trowel", "Recall Wrench", "Cleaning Spray", "Magnifying Glass", "Favorite Tool", "Harvest Tool", "Friendship Pot"}
+local plantgearlist = {"Watering Can", "Basic Sprinkler", "Advanced Sprinkler", "Godly Sprinkler", "Master Sprinkler", "Grandmaster Sprinkler"}
+local petgearlist = {"Medium Toy", "Medium Treat", "Levelup Lollipop"}
 local egglist = {"Common Egg", "Common Summer Egg", "Rare Summer Egg", "Mythical Egg", "Paradise Egg", "Bug Egg"}
-local amount = {1, 1, 1, 2, 2, 2, 2, 3, 3}
 local travelingmerchantshop = {"Common Gnome Crate", "Farmers Gnome Crate", "Classic Gnome Crate", "Iconic Gnome Crate"}
 
 -- ======== --
@@ -72,6 +79,10 @@ local function buyseed(name)
 end
 local function buyegg(name)
     game:GetService("ReplicatedStorage").GameEvents.BuyPetEgg:FireServer(name)
+end
+local function buytravelingmerchant(name)
+    game:GetService("ReplicatedStorage").GameEvents.BuyTravelingMerchantShopStock:FireServer(name)
+end
 local function autobuy()
     if buying then return end
     buying = true
@@ -85,9 +96,6 @@ local function autobuy()
             task.wait(300)
         end
     end)()
-end
-local function buytravelingmerchant(name)
-    game:GetService("ReplicatedStorage").GameEvents.BuyTravelingMerchantShopStock:FireServer(name)
 end
 
 -- Misc functions

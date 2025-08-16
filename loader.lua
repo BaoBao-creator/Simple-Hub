@@ -22,7 +22,8 @@ local orthergearlist = {"Trading Ticket", "Trowel", "Recall Wrench", "Cleaning S
 local plantgearlist = {"Watering Can", "Basic Sprinkler", "Advanced Sprinkler", "Godly Sprinkler", "Master Sprinkler", "Grandmaster Sprinkler"}
 local petgearlist = {"Medium Toy", "Medium Treat", "Levelup Lollipop"}
 local egglist = {"Common Egg", "Common Summer Egg", "Rare Summer Egg", "Mythical Egg", "Paradise Egg", "Bug Egg"}
-local travelingmerchantshop = {"Common Gnome Crate", "Farmers Gnome Crate", "Classic Gnome Crate", "Iconic Gnome Crate"}
+local gnomeshop = {"Common Gnome Crate", "Farmers Gnome Crate", "Classic Gnome Crate", "Iconic Gnome Crate"}
+local honeyshop = {"Flower Seed Pack", "Honey Sprinkler", "Bee Egg", "Bee Crate", "Honey Crafters Crate"}
 
 -- ======== --
 -- Functions 
@@ -83,6 +84,7 @@ end
 local function buytravelingmerchant(name)
     game:GetService("ReplicatedStorage").GameEvents.BuyTravelingMerchantShopStock:FireServer(name)
 end
+
 local function autobuy()
     if buying then return end
     buying = true

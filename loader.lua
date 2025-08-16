@@ -11,7 +11,9 @@ local humanoid = character:WaitForChild("Humanoid")
 
 -- Shop variables
 local buying = false
+local seedlist 
 local gearlist = {"Master Sprinkler", "Grandmaster Sprinkler", "Godly Sprinkler", "Medium Toy", "Medium Treat", "Levelup Lollipop", "Advanced Sprinkler", "Watering Can", "Basic Sprinkler"}
+local egglist = {"Common Egg", "Common Summer Egg", "Rare Summer Egg", "Mythical Egg", "Paradise Egg", "Bug Egg"}
 local amount = {1, 1, 1, 2, 2, 2, 2, 3, 3}
 local travelingmerchantshop = {"Common Gnome Crate", "Farmers Gnome Crate", "Classic Gnome Crate", "Iconic Gnome Crate"}
 
@@ -62,9 +64,14 @@ player.Idled:Connect(function()
 end)
 
 -- Shop functions 
-local function buygear(item)
-    ReplicatedStorage.GameEvents.BuyGearStock:FireServer(item)
+local function buygear(name)
+    ReplicatedStorage.GameEvents.BuyGearStock:FireServer(name)
 end
+local function buyseed(name)
+    game:GetService("ReplicatedStorage").GameEvents.BuySeedStock:FireServer(name)
+end
+local function buyegg(name)
+    game:GetService("ReplicatedStorage").GameEvents.BuyPetEgg:FireServer(name)
 local function autobuy()
     if buying then return end
     buying = true

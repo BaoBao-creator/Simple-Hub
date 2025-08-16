@@ -18,7 +18,7 @@ local legendaryseedlist = {"Watermelon", "Pumpkin", "Apple", "Bamboo"}
 local mythicalseedlist = {"Coconut", "Cactus", "Dragon Fruit", "Mango"}
 local divineseedlist = {"Grape", "Mushroom", "Pepper", "Cacao"}
 local prismaticslist = {"Beanstalk", "Ember Lily", "Sugar Apple", "Burning Bud", "Giant Pinecone", "Elder Strawberry"}
-local orthergearlist = {"Trading Ticket", "Trowel", "Recall Wrench", "Cleaning Spray", "Magnifying Glass", "Favorite Tool", "Harvest Tool", "Friendship Pot"}
+local othergearlist = {"Trading Ticket", "Trowel", "Recall Wrench", "Cleaning Spray", "Magnifying Glass", "Favorite Tool", "Harvest Tool", "Friendship Pot"}
 local plantgearlist = {"Watering Can", "Basic Sprinkler", "Advanced Sprinkler", "Godly Sprinkler", "Master Sprinkler", "Grandmaster Sprinkler"}
 local petgearlist = {"Medium Toy", "Medium Treat", "Levelup Lollipop"}
 local egglist = {"Common Egg", "Common Summer Egg", "Rare Summer Egg", "Mythical Egg", "Paradise Egg", "Bug Egg"}
@@ -118,12 +118,44 @@ local window = simpleui:CreateWindow({Name= "Simple Hub, BaoBao developer"})
 local eventtab = window:CreateTab("Event Tab")
 local farmtab = window:CreateTab("Farm Tab")
 local shoptab = window:CreateTab("Shop Tab")
+shoptab:CreateDropdown({
+    Name = "Seed rarity to buy",
+    Options = {},
+    Multi = false,
+    Callback = function(v) 
+        print(v)
+    end
+})
+shoptab:CreateDropdown({
+    Name = "Plant Gear to buy",
+    Options = {},
+    Multi = false,
+    Callback = function(v) 
+        print(v)
+    end
+})
+shoptab:CreateDropdown({
+    Name = "Pet gear to buy",
+    Options = {},
+    Multi = false,
+    Callback = function(v) 
+        print(v)
+    end
+})
+shoptab:CreateDropdown({
+    Name = "Other gear to buy",
+    Options = {},
+    Multi = false,
+    Callback = function(v) 
+        print(v)
+    end
+})
 shoptab: CreateToggle({
     Name = "Auto buy good gears",
     CurrentValue = false,
     Callback = function(v)
         if v then
-            buygears()
+            autobuy()
         else
             buying = false
         end

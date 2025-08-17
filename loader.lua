@@ -87,22 +87,10 @@ end
 local simpleui = loadstring(game:HttpGet("https://raw.githubusercontent.com/BaoBao-creator/Simple-Ui/main/ui.lua"))()
 local window = simpleui:CreateWindow({Name= "Simple Hub, BaoBao developer"})
 local eventtab = window:CreateTab("Event Tab")
-eventtab:CreateTextbox({
-    Name = "Collect Plants",
+eventtab:CreateTextBox({
+    Name = "Plants want to collect",
     Callback = function(text)
         CollectList = splitString(text, ",")
         print("CollectList set:", table.concat(CollectList, ", "))
-    end
-})
-eventtab:CreateButton({
-    Name = "Start Collect",
-    Callback = function()
-        collectall()
-    end
-})
-eventtab:CreateButton({
-    Name = "Stop Collect",
-    Callback = function()
-        stopcollect()
     end
 })

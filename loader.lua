@@ -6,6 +6,23 @@ local humanoid = character:WaitForChild("Humanoid")
 local CollectList = {}
 local collecting = false
 local feeding = false
+local mainFarm = workspace:WaitForChild("Farm")
+local function setFarmVisible(isVisible)
+    for _, farm in ipairs(mainFarm:GetChildren()) do
+        if farm:IsA("Folder") or farm:IsA("Model") then
+            for _, obj in ipairs(farm:GetDescendants()) do
+                if obj:IsA("BasePart") then
+                    obj.Transparency = isVisible and 0 or 1
+                    obj.CanCollide = isVisible
+                elseif obj:IsA("Decal") or obj:IsA("Texture") then
+                    obj.Transparency = isVisible and 0 or 1
+                elseif obj:IsA("ParticleEmitter") or obj:IsA("Trail") then
+                    obj.Enabled = isVisible
+                end
+            end
+        end
+    end
+end
 local function splitString(str, sep)
     sep = sep or ","
     local result = {}
@@ -121,5 +138,12 @@ farmtab:CreateToggle({
         else
             collecting = false
         end
+    end
+})
+local misctab = window:CreateTab("Misc Tab")
+misctab:CreateToggle({
+    Name = "Anti lag",
+    Callback = function(v)
+        setFarmVisible(not v)
     end
 })

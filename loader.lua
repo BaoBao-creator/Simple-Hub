@@ -95,7 +95,7 @@ local function autobuy()
                     buy(gear)
                 end
             end
-            task.wait(300)
+            task.wait(20)
         end
     end)()
 end
@@ -119,39 +119,55 @@ local eventtab = window:CreateTab("Event Tab")
 local farmtab = window:CreateTab("Farm Tab")
 local shoptab = window:CreateTab("Shop Tab")
 shoptab:CreateDropdown({
-    Name = "Seed rarity to buy",
-    Options = {},
+    Name = "Seed rarity to but",
+    Options = {"All", "Common", "Uncommon", "Rare", "Legendary", "Mythical", "Divine", "Prismatic"},
     Multi = false,
     Callback = function(v) 
         print(v)
     end
 })
 shoptab:CreateDropdown({
-    Name = "Plant Gear to buy",
-    Options = {table.unpack(plantgearlist), "all"},
+    Name = "Plant Gear",
+    Options = {"All", table.unpack(plantgearlist)},
     Multi = false,
     Callback = function(v) 
         print(v)
     end
 })
 shoptab:CreateDropdown({
-    Name = "Pet gear to buy",
-    Options = {},
+    Name = "Pet gear",
+    Options = {"All", table.unpack(petgearlist)},
     Multi = false,
     Callback = function(v) 
         print(v)
     end
 })
 shoptab:CreateDropdown({
-    Name = "Other gear to buy",
-    Options = {},
+    Name = "Other gear",
+    Options = {"All", table.unpack(othergearlist)},
+    Multi = false,
+    Callback = function(v) 
+        print(v)
+    end
+})
+shoptab:CreateDropdown({
+    Name = "Honey merchant",
+    Options = {"All", table.unpack(honeyshop)},
+    Multi = false,
+    Callback = function(v) 
+        print(v)
+    end
+})
+shoptab:CreateDropdown({
+    Name = "Gnome merchant",
+    Options = {"All", table.unpack(gnomeshop)},
     Multi = false,
     Callback = function(v) 
         print(v)
     end
 })
 shoptab: CreateToggle({
-    Name = "Auto buy good gears",
+    Name = "Auto Buy",
     CurrentValue = false,
     Callback = function(v)
         if v then

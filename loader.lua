@@ -11,6 +11,12 @@ local humanoid = character:WaitForChild("Humanoid")
 
 -- Shop variables
 local buying = false
+local list1 = {}
+local list2 = {}
+local list3 = {}
+local list4 = {}
+local list5 = {}
+local list6 = {}
 local commonseedlist = {"Carrot", "Strawberry"}
 local uncommonseedlist = {"Blueberry", "Orange Tulip"}
 local rareseedlist = {"Tomato", "Corn", "Daffodil"}
@@ -127,7 +133,7 @@ shoptab:CreateDropdown({
     Options = {"All", "Common", "Uncommon", "Rare", "Legendary", "Mythical", "Divine", "Prismatic"},
     Multi = false,
     Callback = function(v) 
-        print(v)
+        list1 = v
     end
 })
 shoptab:CreateDropdown({
@@ -135,7 +141,7 @@ shoptab:CreateDropdown({
     Options = {"All", table.unpack(plantgearlist)},
     Multi = false,
     Callback = function(v) 
-        print(v)
+        list2 = v
     end
 })
 shoptab:CreateDropdown({
@@ -143,7 +149,7 @@ shoptab:CreateDropdown({
     Options = {"All", table.unpack(petgearlist)},
     Multi = false,
     Callback = function(v) 
-        print(v)
+        list3 = v
     end
 })
 shoptab:CreateDropdown({
@@ -151,7 +157,7 @@ shoptab:CreateDropdown({
     Options = {"All", table.unpack(othergearlist)},
     Multi = false,
     Callback = function(v) 
-        print(v)
+        list4 = v
     end
 })
 shoptab:CreateDropdown({
@@ -159,7 +165,7 @@ shoptab:CreateDropdown({
     Options = {"All", table.unpack(honeyshop)},
     Multi = false,
     Callback = function(v) 
-        print(v)
+        list5 = v
     end
 })
 shoptab:CreateDropdown({
@@ -167,7 +173,7 @@ shoptab:CreateDropdown({
     Options = {"All", table.unpack(gnomeshop)},
     Multi = false,
     Callback = function(v) 
-        print(v)
+        list6 = v
     end
 })
 shoptab: CreateToggle({

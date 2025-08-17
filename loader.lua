@@ -145,10 +145,12 @@ eventtab:CreateButton({
     end
 })
 local farmtab = window:CreateTab("Farm Tab")
-farmtab:CreateTextBox({
+farmtab:CreateDropdown({
     Name = "Plants want to collect",
-    Callback = function(text)
-        CollectList = splitString(text, ",")
+    Options = getMyPlantList(),
+    Multi = false,
+    Callback = function(v) 
+        CollectList = v
     end
 })
 farmtab:CreateToggle({

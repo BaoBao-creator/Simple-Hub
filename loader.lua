@@ -10,7 +10,8 @@ local character = player.Character or player.CharacterAdded:Wait()
 local humanoid = character:WaitForChild("Humanoid")
 
 -- Shop variables
-local buying = false
+local buying1 = false
+local buying2 = false
 local list1 = {}
 local list2 = {}
 local list3 = {}
@@ -88,7 +89,7 @@ end
 local function buyegg(name)
     game:GetService("ReplicatedStorage").GameEvents.BuyPetEgg:FireServer(name)
 end
-local function buytravelingmerchant(name)
+local function buymerchant(name)
     game:GetService("ReplicatedStorage").GameEvents.BuyTravelingMerchantShopStock:FireServer(name)
 end
 local function isall(l)
@@ -104,11 +105,11 @@ local function getstock(shopName, itemName)
     local number = stockText.Text:match("X(%d+)%sStock")
     return tonumber(number) or 0
 end
-local function autobuy()
-    if buying then return end
-    buying = true
+local function autobuy1()
+    if buying1 then return end
+    buying1 = true
     coroutine.wrap(function()
-        while buying do
+        while buying1 do
             local seedlist = {}
             for _, i in ipairs(list1) do
                 if i == "Common" then
@@ -136,7 +137,7 @@ local function autobuy()
                 end
             end
             local gearlist = {table.unpack(list2), table.unpack(list3), table.unpack(list4)}
-            for _, i in ipairs(gearlist)
+            for _, i in ipairs(gearlist) do
                 a = getstock("Gear_Shop", i)
                 if a > 0 then
                     for k = 1, a do
@@ -144,12 +145,31 @@ local function autobuy()
                     end
                 end
             end
-            for _, i in ipairs(list
             task.wait(20)
         end
     end)()
 end
-
+local function autobuy2()
+    if buying2 then return end
+    buying2 = true
+    coroutine.wrap(function()
+        while buying2 do
+            for _, i in ipairs(list5) do
+                a = getstock("PetShop_UI", i)
+                if a > 0 then
+                    for k = 1, a do
+                        buyegg(i)
+                    end
+                end
+            end
+            local merchant = {table.unpack(list6), table.unpack(list7)}
+            for _, i in ipairs(merchant) do
+                buymerchant(i)
+            end
+            task.wait(120)
+        end
+    end)()
+end
 -- Misc functions
 local function setnoclip(enabled)
     for _, part in pairs(player.Character:GetChildren()) do
@@ -257,9 +277,11 @@ shoptab: CreateToggle({
     CurrentValue = false,
     Callback = function(v)
         if v then
-            autobuy()
+            autobuy1()
+            autobuy2()
         else
-            buying = false
+            buying1 = false
+            buying2 = false
         end
     end
 })

@@ -84,7 +84,11 @@ end
 local function buytravelingmerchant(name)
     game:GetService("ReplicatedStorage").GameEvents.BuyTravelingMerchantShopStock:FireServer(name)
 end
-
+local function getstock(shopName, itemName)
+    local stockText = player.PlayerGui[shopName].Frame.ScrollingFrame[itemName].Main_Frame.Stock_Text
+    local number = stockText.Text:match("X(%d+)%sStock")
+    return tonumber(number) or 0
+end
 local function autobuy()
     if buying then return end
     buying = true

@@ -5,6 +5,7 @@ local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 local humanoid = character:WaitForChild("Humanoid")
 local CollectList = {}
 local collecting = false
+local feeding = false
 local function splitString(str, sep)
     sep = sep or ","
     local result = {}
@@ -84,6 +85,18 @@ function collectall()
 end
 function stopcollect()
     collecting = false
+end
+function autofeed()
+    feeding = true
+    coroutine.wrap(function()
+        while feeding do
+            game:GetService("ReplicatedStorage").GameEvents.BeanstalkRESubmitAllPlant:FireServer()
+            task.wait(5)
+        end  
+    end)()
+end
+function offautofeed()
+    feeding = false
 end
 local simpleui = loadstring(game:HttpGet("https://raw.githubusercontent.com/BaoBao-creator/Simple-Ui/main/ui.lua"))()
 local window = simpleui:CreateWindow({Name= "Simple Hub, BaoBao developer"})

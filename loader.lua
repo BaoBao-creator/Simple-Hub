@@ -7,6 +7,21 @@ local CollectList = {}
 local collecting = false
 local feeding = false
 local mainFarm = workspace:WaitForChild("Farm")
+local function getMyPlantList()
+    local farmsFolder = workspace.Farm
+    local names, seen = {}, {}
+    for _, farm in ipairs(farmsFolder:GetChildren()) do
+        if farm.Important.Data.Owner.Value == LocalPlayer.Name then
+            for _, plant in ipairs(farm.Important.Plants_Physical:GetChildren()) do
+                if not seen[plant.Name] then
+                    seen[plant.Name] = true
+                    table.insert(names, plant.Name)
+                end
+            end
+        end
+    end
+    return names
+end
 local function setFarmVisible(isVisible)
     for _, farm in ipairs(mainFarm:GetChildren()) do
         if farm:IsA("Folder") or farm:IsA("Model") then
@@ -122,9 +137,9 @@ eventtab:CreateToggle({
         end
     end
 })
-eventtab:CreateTextBox({
-    Name = "Open shop",
-    Callback = function(text)
+eventtab:CreateButton({
+    Name = "Open event shop",
+    Callback = function()
         local gui = player.PlayerGui:WaitForChild("EventShop_UI")
         gui.Enabled = true
     end

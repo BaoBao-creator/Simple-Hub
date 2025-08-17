@@ -122,12 +122,18 @@ eventtab:CreateToggle({
         end
     end
 })
+eventtab:CreateTextBox({
+    Name = "Open shop",
+    Callback = function(text)
+        local gui = player.PlayerGui:WaitForChild("EventShop_UI")
+        gui.Enabled = true
+    end
+})
 local farmtab = window:CreateTab("Farm Tab")
 farmtab:CreateTextBox({
     Name = "Plants want to collect",
     Callback = function(text)
         CollectList = splitString(text, ",")
-        print("CollectList set:", table.concat(CollectList, ", "))
     end
 })
 farmtab:CreateToggle({

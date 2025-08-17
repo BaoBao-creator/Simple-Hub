@@ -70,6 +70,7 @@ function collectall()
                                 if fruitsFolder then
                                     for _, fruit in ipairs(fruitsFolder:GetChildren()) do
                                         collectFruit(fruit)
+                                        task.wait(0.25)
                                     end
                                 end
                             end
@@ -87,14 +88,25 @@ end
 local simpleui = loadstring(game:HttpGet("https://raw.githubusercontent.com/BaoBao-creator/Simple-Ui/main/ui.lua"))()
 local window = simpleui:CreateWindow({Name= "Simple Hub, BaoBao developer"})
 local eventtab = window:CreateTab("Event Tab")
-eventtab:CreateTextBox({
+eventtab:CreateToggle({
+    Name = "Auto feed to beanstalk",
+    Callback = function(v)
+        if v then
+            autofeed()
+        else
+            offautofeed()
+        end
+    end
+})
+local farmtab = window:CreateTab("Farm Tab")
+farmtab:CreateTextBox({
     Name = "Plants want to collect",
     Callback = function(text)
         CollectList = splitString(text, ",")
         print("CollectList set:", table.concat(CollectList, ", "))
     end
 })
-eventtab:CreateToggle({
+farmtab:CreateToggle({
     Name = "Auto Collect Nearby",
     Callback = function(v)
         if v then

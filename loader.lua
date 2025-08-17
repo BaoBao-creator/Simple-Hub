@@ -138,7 +138,7 @@ eventtab:CreateToggle({
     end
 })
 eventtab:CreateButton({
-    Name = "Open event shop",
+    Name = "Tp to event shop",
     Callback = function()
         local gui = player.PlayerGui:WaitForChild("EventShop_UI")
         gui.Enabled = true
@@ -148,7 +148,7 @@ local farmtab = window:CreateTab("Farm Tab")
 farmtab:CreateDropdown({
     Name = "Plants want to collect",
     Options = getMyPlantList(),
-    Multi = false,
+    Multi = true,
     Callback = function(v) 
         CollectList = v
     end

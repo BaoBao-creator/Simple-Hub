@@ -94,3 +94,13 @@ eventtab:CreateTextBox({
         print("CollectList set:", table.concat(CollectList, ", "))
     end
 })
+eventtab:CreateToggle({
+    Name = "Auto Collect Nearby",
+    Callback = function(v)
+        if v then
+            collectall()
+        else
+            stopcollect()
+        end
+    end
+})

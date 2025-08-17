@@ -1,16 +1,10 @@
--- ======== --
--- Variables 
--- ======== --
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local player = Players.LocalPlayer
-local character = player.Character or player.CharacterAdded:Wait()
+local LocalPlayer = Players.LocalPlayer
+local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 local humanoid = character:WaitForChild("Humanoid")
 local CollectList = {}
 local collecting = false
--- ======== --
--- Functions 
--- ======== --
 local function splitString(str, sep)
     sep = sep or ","
     local result = {}
@@ -35,7 +29,9 @@ local function tryProximityPrompts(fruit)
             local firePP = rawget(getgenv(), "fireproximityprompt") or _G.fireproximityprompt or fireproximityprompt
             if typeof(firePP) == "function" then
                 pcall(function()
-                    if d.HoldDuration and d.HoldDuration > 0 then d.HoldDuration = 0 end
+                    if d.HoldDuration and d.HoldDuration > 0 then
+                        d.HoldDuration = 0
+                    end
                     firePP(d, 1)
                     ok = true
                 end)
@@ -54,29 +50,29 @@ end
 local function collectFruit(fruit)
     if not fruit or not fruit.Parent then return false end
     if not (fruit:IsA("Model") or fruit:IsA("BasePart")) then return false end
-    if tryProximityPrompts(fruit) then return true end
-    return false
+    return tryProximityPrompts(fruit)
 end
 function collectall()
     collecting = true
     coroutine.wrap(function()
         local farmsFolder = workspace:WaitForChild("Farm")
-        for _, farm in ipairs(farmsFolder:GetChildren()) do
-            local imp = farm:FindFirstChild("Important")
-            local data = imp and imp:FindFirstChild("Data")
-            local owner = data and data:FindFirstChild("Owner")
-            if owner and owner.Value == LocalPlayer.Name and then
-                break
-            end
-        end
         while collecting do
-            local plants = imp and imp:FindFirstChild("Plants_Physical")
-            for _, plant in ipairs(plants:GetChildren()) do
-                if isCollectable(plant.Name) then
-                    local fruitsFolder = plant:FindFirstChild("Fruits")
-                    if fruitsFolder then
-                        for _, fruit in ipairs(fruitsFolder:GetChildren()) do
-                            collectFruit(fruit)
+            for _, farm in ipairs(farmsFolder:GetChildren()) do
+                local imp = farm:FindFirstChild("Important")
+                local data = imp and imp:FindFirstChild("Data")
+                local owner = data and data:FindFirstChild("Owner")
+                if owner and owner.Value == LocalPlayer.Name then
+                    local plants = imp and imp:FindFirstChild("Plants_Physical")
+                    if plants then
+                        for _, plant in ipairs(plants:GetChildren()) do
+                            if isCollectable(plant.Name) then
+                                local fruitsFolder = plant:FindFirstChild("Fruits")
+                                if fruitsFolder then
+                                    for _, fruit in ipairs(fruitsFolder:GetChildren()) do
+                                        collectFruit(fruit)
+                                    end
+                                end
+                            end
                         end
                     end
                 end
@@ -85,9 +81,28 @@ function collectall()
         end
     end)()
 end
--- == --
--- Ui
--- == --
+function stopcollect()
+    collecting = false
+end
 local simpleui = loadstring(game:HttpGet("https://raw.githubusercontent.com/BaoBao-creator/Simple-Ui/main/ui.lua"))()
 local window = simpleui:CreateWindow({Name= "Simple Hub, BaoBao developer"})
 local eventtab = window:CreateTab("Event Tab")
+eventtab:CreateTextbox({
+    Name = "Collect Plants",
+    Callback = function(text)
+        CollectList = splitString(text, ",")
+        print("CollectList set:", table.concat(CollectList, ", "))
+    end
+})
+eventtab:CreateButton({
+    Name = "Start Collect",
+    Callback = function()
+        collectall()
+    end
+})
+eventtab:CreateButton({
+    Name = "Stop Collect",
+    Callback = function()
+        stopcollect()
+    end
+})

@@ -129,16 +129,16 @@ local function autobuy1()
                 end
             end
             for _, i in ipairs(seedlist) do
-                a = getstock("Seed_Shop", j)
+                local a = getstock("Seed_Shop", j)
                 if a > 0 then
                     for k = 1, a do
-                        buyseed(j)
+                        buyseed(i)
                     end
                 end
             end
             local gearlist = {table.unpack(list2), table.unpack(list3), table.unpack(list4)}
             for _, i in ipairs(gearlist) do
-                a = getstock("Gear_Shop", i)
+                local a = getstock("Gear_Shop", i)
                 if a > 0 then
                     for k = 1, a do
                         buygear(i)
@@ -155,7 +155,7 @@ local function autobuy2()
     coroutine.wrap(function()
         while buying2 do
             for _, i in ipairs(list5) do
-                a = getstock("PetShop_UI", i)
+                local a = getstock("PetShop_UI", i)
                 if a > 0 then
                     for k = 1, a do
                         buyegg(i)

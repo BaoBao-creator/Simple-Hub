@@ -11,35 +11,31 @@ local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
 local flying = false
-local flySpeed = 60
-local flyConnection
-function onfly()
+local camera = workspace.CurrentCamera
+local flyConn
+function onFly()
     if flying then return end
     flying = true
-    local bodyVelocity = Instance.new("BodyVelocity")
-    bodyVelocity.MaxForce = Vector3.new(1e5, 1e5, 1e5)
-    bodyVelocity.Velocity = Vector3.zero
-    bodyVelocity.Parent = humanoidRootPart
-    flyConnection = RunService.RenderStepped:Connect(function()
-        local camCF = workspace.CurrentCamera.CFrame
+    humanoid.PlatformStand = true
+    flyConn = RunService.RenderStepped:Connect(function()
+        if not flying then return end
         local moveDir = humanoid.MoveDirection
-        if moveDir.Magnitude > 0 then
-            bodyVelocity.Velocity = camCF:VectorToWorldSpace(moveDir) * flySpeed
-        else
-            bodyVelocity.Velocity = Vector3.zero
-        end
+        local camCF = camera.CFrame
+        local speed = 60
+        local moveVec =
+            (camCF.RightVector * moveDir.X) +
+            (camCF.LookVector * moveDir.Z) +
+            (Vector3.new(0,1,0) * moveDir.Y)
+        humanoidRootPart.Velocity = moveVec * speed
     end)
 end
-function offfly()
-    if not flying then return end
+function offFly()
     flying = false
-    if flyConnection then
-        flyConnection:Disconnect()
-        flyConnection = nil
+    if character then
+        if humanoidRootPart then humanoidRootPart.Velocity = Vector3.zero end
+        if humanoid then humanoid.PlatformStand = false end
     end
-    if humanoidRootPart:FindFirstChild("BodyVelocity") then
-        humanoidRootPart.BodyVelocity:Destroy()
-    end
+    if flyConn then flyConn:Disconnect() end
 end
 local function getMyPlantList()
     local farmsFolder = workspace.Farm
@@ -206,9 +202,9 @@ misctab:CreateToggle({
     Name = "Fly",
     Callback = function(v)
         if v then
-            onfly()
+            onFly()
         else
-            offfly()
+            offFly()
         end
     end
 })

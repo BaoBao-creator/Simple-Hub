@@ -53,7 +53,7 @@ local function collectFruit(fruit)
     if not (fruit:IsA("Model") or fruit:IsA("BasePart")) then return false end
     return tryProximityPrompts(fruit)
 end
-function collectall()
+local function collectall()
     collecting = true
     coroutine.wrap(function()
         local farmsFolder = workspace:WaitForChild("Farm")
@@ -83,10 +83,7 @@ function collectall()
         end
     end)()
 end
-function stopcollect()
-    collecting = false
-end
-function autofeed()
+local function autofeed()
     feeding = true
     coroutine.wrap(function()
         while feeding do
@@ -94,9 +91,6 @@ function autofeed()
             task.wait(5)
         end  
     end)()
-end
-function offautofeed()
-    feeding = false
 end
 local simpleui = loadstring(game:HttpGet("https://raw.githubusercontent.com/BaoBao-creator/Simple-Ui/main/ui.lua"))()
 local window = simpleui:CreateWindow({Name= "Simple Hub, BaoBao developer"})
@@ -107,7 +101,7 @@ eventtab:CreateToggle({
         if v then
             autofeed()
         else
-            offautofeed()
+            feeding = false
         end
     end
 })
@@ -125,7 +119,7 @@ farmtab:CreateToggle({
         if v then
             collectall()
         else
-            stopcollect()
+            collecting = false
         end
     end
 })

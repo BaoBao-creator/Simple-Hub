@@ -17,6 +17,7 @@ local list3 = {}
 local list4 = {}
 local list5 = {}
 local list6 = {}
+local list7 = {}
 local commonseedlist = {"Carrot", "Strawberry"}
 local uncommonseedlist = {"Blueberry", "Orange Tulip"}
 local rareseedlist = {"Tomato", "Corn", "Daffodil"}
@@ -108,11 +109,42 @@ local function autobuy()
     buying = true
     coroutine.wrap(function()
         while buying do
-            for idx, gear in ipairs(gearlist) do
-                for j = 1, amount[idx] do
-                    buy(gear)
+            local seedlist = {}
+            for _, i in ipairs(list1) do
+                if i == "Common" then
+                    seedlist = commonseedlist
+                elseif i == "Uncommon" then
+                    seedlist = {table.unpack(seedlist), table.unpack(uncommonseedlist)}
+                elseif i == "Rare" then
+                    seedlist = {table.unpack(seedlist), table.unpack(rareseedlist)}
+                elseif i == "Legendary" then
+                    seedlist = {table.unpack(seedlist), table.unpack(legendaryseedlist)}
+                elseif i == "Mythical" then
+                    seedlist = {table.unpack(seedlist), table.unpack(mythicalseedlist)}
+                elseif i == "Divine" then
+                    seedlist = {table.unpack(seedlist), table.unpack(divineseedlist)}
+                elseif i == "Prismatic" then
+                    seedlist = {table.unpack(seedlist), table.unpack(prismaticseedlist)}
                 end
             end
+            for _, i in ipairs(seedlist) do
+                a = getstock("Seed_Shop", j)
+                if a > 0 then
+                    for k = 1, a do
+                        buyseed(j)
+                    end
+                end
+            end
+            local gearlist = {table.unpack(list2), table.unpack(list3), table.unpack(list4)}
+            for _, i in ipairs(gearlist)
+                a = getstock("Gear_Shop", i)
+                if a > 0 then
+                    for k = 1, a do
+                        buygear(i)
+                    end
+                end
+            end
+            for _, i in ipairs(list
             task.wait(20)
         end
     end)()
@@ -139,7 +171,7 @@ local shoptab = window:CreateTab("Shop Tab")
 shoptab:CreateDropdown({
     Name = "Seed rarity to but",
     Options = {"All", "Common", "Uncommon", "Rare", "Legendary", "Mythical", "Divine", "Prismatic"},
-    Multi = false,
+    Multi = true,
     Callback = function(v) 
         if isall(v) then
             list1 = {"Common", "Uncommon", "Rare", "Legendary", "Mythical", "Divine", "Prismatic"}
@@ -151,7 +183,7 @@ shoptab:CreateDropdown({
 shoptab:CreateDropdown({
     Name = "Plant Gear",
     Options = {"All", table.unpack(plantgearlist)},
-    Multi = false,
+    Multi = true,
     Callback = function(v) 
         if isall(v) then
             list2 = plantgearlist
@@ -163,7 +195,7 @@ shoptab:CreateDropdown({
 shoptab:CreateDropdown({
     Name = "Pet gear",
     Options = {"All", table.unpack(petgearlist)},
-    Multi = false,
+    Multi = true,
     Callback = function(v) 
         if isall(v) then
             list3 = petgearlist
@@ -175,7 +207,7 @@ shoptab:CreateDropdown({
 shoptab:CreateDropdown({
     Name = "Other gear",
     Options = {"All", table.unpack(othergearlist)},
-    Multi = false,
+    Multi = true,
     Callback = function(v) 
         if isall(v) then
             list4 = othergearlist
@@ -185,26 +217,38 @@ shoptab:CreateDropdown({
     end
 })
 shoptab:CreateDropdown({
-    Name = "Honey merchant",
-    Options = {"All", table.unpack(honeyshop)},
-    Multi = false,
+    Name = "Egg",
+    Options = {"All", table.unpack(egglist)},
+    Multi = true,
     Callback = function(v) 
         if isall(v) then
-            list5 = honeyshop
+            list5 = egglist
         else
             list5 = v
         end
     end
 })
 shoptab:CreateDropdown({
-    Name = "Gnome merchant",
-    Options = {"All", table.unpack(gnomeshop)},
-    Multi = false,
+    Name = "Honey merchant",
+    Options = {"All", table.unpack(honeyshop)},
+    Multi = true,
     Callback = function(v) 
         if isall(v) then
-            list6 = gnomeshop
+            list6 = honeyshop
         else
             list6 = v
+        end
+    end
+})
+shoptab:CreateDropdown({
+    Name = "Gnome merchant",
+    Options = {"All", table.unpack(gnomeshop)},
+    Multi = true,
+    Callback = function(v) 
+        if isall(v) then
+            list7 = gnomeshop
+        else
+            list7 = v
         end
     end
 })

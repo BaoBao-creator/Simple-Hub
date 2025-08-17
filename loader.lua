@@ -90,6 +90,14 @@ end
 local function buytravelingmerchant(name)
     game:GetService("ReplicatedStorage").GameEvents.BuyTravelingMerchantShopStock:FireServer(name)
 end
+local function isall(l)
+    for _, name in ipairs(l) do
+        if name == "All" then
+            return true
+        end
+    end
+    return false
+end
 local function getstock(shopName, itemName)
     local stockText = player.PlayerGui[shopName].Frame.ScrollingFrame[itemName].Main_Frame.Stock_Text
     local number = stockText.Text:match("X(%d+)%sStock")
@@ -133,7 +141,11 @@ shoptab:CreateDropdown({
     Options = {"All", "Common", "Uncommon", "Rare", "Legendary", "Mythical", "Divine", "Prismatic"},
     Multi = false,
     Callback = function(v) 
-        list1 = v
+        if isall(v) then
+            list1 = {"Common", "Uncommon", "Rare", "Legendary", "Mythical", "Divine", "Prismatic"}
+        else
+            list1 = v
+        end
     end
 })
 shoptab:CreateDropdown({
@@ -141,7 +153,11 @@ shoptab:CreateDropdown({
     Options = {"All", table.unpack(plantgearlist)},
     Multi = false,
     Callback = function(v) 
-        list2 = v
+        if isall(v) then
+            list2 = plantgearlist
+        else
+            list2 = v
+        end
     end
 })
 shoptab:CreateDropdown({
@@ -149,7 +165,11 @@ shoptab:CreateDropdown({
     Options = {"All", table.unpack(petgearlist)},
     Multi = false,
     Callback = function(v) 
-        list3 = v
+        if isall(v) then
+            list3 = petgearlist
+        else
+            list3 = v
+        end
     end
 })
 shoptab:CreateDropdown({
@@ -157,7 +177,11 @@ shoptab:CreateDropdown({
     Options = {"All", table.unpack(othergearlist)},
     Multi = false,
     Callback = function(v) 
-        list4 = v
+        if isall(v) then
+            list4 = othergearlist
+        else
+            list4 = v
+        end
     end
 })
 shoptab:CreateDropdown({
@@ -165,7 +189,11 @@ shoptab:CreateDropdown({
     Options = {"All", table.unpack(honeyshop)},
     Multi = false,
     Callback = function(v) 
-        list5 = v
+        if isall(v) then
+            list5 = honeyshop
+        else
+            list5 = v
+        end
     end
 })
 shoptab:CreateDropdown({
@@ -173,7 +201,11 @@ shoptab:CreateDropdown({
     Options = {"All", table.unpack(gnomeshop)},
     Multi = false,
     Callback = function(v) 
-        list6 = v
+        if isall(v) then
+            list6 = gnomeshop
+        else
+            list6 = v
+        end
     end
 })
 shoptab: CreateToggle({

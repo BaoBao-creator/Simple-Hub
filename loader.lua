@@ -7,6 +7,40 @@ local CollectList = {}
 local collecting = false
 local feeding = false
 local mainFarm = workspace:WaitForChild("Farm")
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+local flying = false
+local flySpeed = 60
+local flyConnection
+function onfly()
+    if flying then return end
+    flying = true
+    local bodyVelocity = Instance.new("BodyVelocity")
+    bodyVelocity.MaxForce = Vector3.new(1e5, 1e5, 1e5)
+    bodyVelocity.Velocity = Vector3.zero
+    bodyVelocity.Parent = humanoidRootPart
+    flyConnection = RunService.RenderStepped:Connect(function()
+        local camCF = workspace.CurrentCamera.CFrame
+        local moveDir = humanoid.MoveDirection
+        if moveDir.Magnitude > 0 then
+            bodyVelocity.Velocity = camCF:VectorToWorldSpace(moveDir) * flySpeed
+        else
+            bodyVelocity.Velocity = Vector3.zero
+        end
+    end)
+end
+function offfly()
+    if not flying then return end
+    flying = false
+    if flyConnection then
+        flyConnection:Disconnect()
+        flyConnection = nil
+    end
+    if humanoidRootPart:FindFirstChild("BodyVelocity") then
+        humanoidRootPart.BodyVelocity:Destroy()
+    end
+end
 local function getMyPlantList()
     local farmsFolder = workspace.Farm
     local names, seen = {}, {}
@@ -168,5 +202,15 @@ misctab:CreateToggle({
     Name = "Anti lag",
     Callback = function(v)
         setFarmVisible(not v)
+    end
+})
+misctab:CreateToggle({
+    Name = "Fly",
+    Callback = function(v)
+        if v then
+            onfly()
+        else
+            offfly()
+        end
     end
 })

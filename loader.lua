@@ -10,33 +10,29 @@ local mainFarm = workspace:WaitForChild("Farm")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+UserInputService.TouchJumpEnabled = true
+local jetpackEnabled = false
 local flying = false
-local camera = workspace.CurrentCamera
-local flyConn
-function onFly()
-    if flying then return end
-    flying = true
-    humanoid.PlatformStand = true
-    flyConn = RunService.RenderStepped:Connect(function()
-        if not flying then return end
-        local moveDir = humanoid.MoveDirection
-        local camCF = camera.CFrame
-        local speed = 60
-        local moveVec =
-            (camCF.RightVector * moveDir.X) +
-            (camCF.LookVector * moveDir.Z) +
-            (Vector3.new(0,1,0) * moveDir.Y)
-        humanoidRootPart.Velocity = moveVec * speed
-    end)
-end
-function offFly()
-    flying = false
-    if character then
-        if humanoidRootPart then humanoidRootPart.Velocity = Vector3.zero end
-        if humanoid then humanoid.PlatformStand = false end
+local flySpeed = 50
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+    if gameProcessed then return end
+    if jetpackEnabled and (input.KeyCode == Enum.KeyCode.Space or input.UserInputType == Enum.UserInputType.Touch) then
+        flying = true
+        while flying and jetpackEnabled do
+            humanoidRootPart.Velocity = Vector3.new(
+                humanoidRootPart.Velocity.X,
+                flySpeed,
+                humanoidRootPart.Velocity.Z
+            )
+            task.wait()
+        end
     end
-    if flyConn then flyConn:Disconnect() end
-end
+end)
+UserInputService.InputEnded:Connect(function(input, gameProcessed)
+    if (input.KeyCode == Enum.KeyCode.Space or input.UserInputType == Enum.UserInputType.Touch) then
+        flying = false
+    end
+end)
 local function getMyPlantList()
     local farmsFolder = workspace.Farm
     local names, seen = {}, {}
@@ -199,12 +195,8 @@ misctab:CreateToggle({
     end
 })
 misctab:CreateToggle({
-    Name = "Fly",
+    Name = "Jetpack",
     Callback = function(v)
-        if v then
-            onFly()
-        else
-            offFly()
-        end
+        jetpackEnabled = v
     end
 })

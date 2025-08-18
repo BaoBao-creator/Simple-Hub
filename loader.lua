@@ -142,10 +142,10 @@ eventtab:CreateToggle({
     end
 })
 eventtab:CreateButton({
-    Name = "Tp to event shop",
+    Name = "Open/close event shop",
     Callback = function()
         local gui = player.PlayerGui:WaitForChild("EventShop_UI")
-        gui.Enabled = true
+        gui.Enabled = not gui.Enabled
     end
 })
 local farmtab = window:CreateTab("Farm Tab")
@@ -170,11 +170,5 @@ misctab:CreateToggle({
     Name = "Anti lag",
     Callback = function(v)
         setFarmVisible(not v)
-    end
-})
-misctab:CreateButton({
-    Name = "visible Jump",
-    Callback = function(v)
-        UserInputService.TouchJumpEnabled = true
     end
 })

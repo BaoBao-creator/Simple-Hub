@@ -38,6 +38,7 @@ local function setFarmVisible(isVisible)
                 elseif obj:IsA("ParticleEmitter") or obj:IsA("Trail") then
                     obj.Enabled = isVisible
                 end
+                wait(0.5)
             end
         end
     end

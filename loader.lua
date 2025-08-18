@@ -11,31 +11,6 @@ local mainFarm = workspace:WaitForChild("Farm")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-UserInputService.TouchJumpEnabled = true
-local jetpackEnabled = false
-local flying = false
-local flySpeed = 50
-UserInputService.InputBegan:Connect(function(input, gameProcessed)
-    if gameProcessed then return end
-    if jetpackEnabled and (input.KeyCode == Enum.KeyCode.Space or input.UserInputType == Enum.UserInputType.Touch) then
-        flying = true
-        task.spawn(function()
-            while flying and jetpackEnabled do
-                humanoidRootPart.Velocity = Vector3.new(
-                    humanoidRootPart.Velocity.X,
-                    flySpeed,
-                    humanoidRootPart.Velocity.Z
-                )
-                task.wait()
-            end
-        end)
-    end
-end)
-UserInputService.InputEnded:Connect(function(input, gameProcessed)
-    if input.KeyCode == Enum.KeyCode.Space or input.UserInputType == Enum.UserInputType.Touch then
-        flying = false
-    end
-end)
 local function getMyPlantList()
     local farmsFolder = workspace.Farm
     local names, seen = {}, {}
@@ -197,9 +172,9 @@ misctab:CreateToggle({
         setFarmVisible(not v)
     end
 })
-misctab:CreateToggle({
-    Name = "Jetpack",
+misctab:CreateButton({
+    Name = "visible Jump",
     Callback = function(v)
-        jetpackEnabled = v
+        UserInputService.TouchJumpEnabled = true
     end
 })

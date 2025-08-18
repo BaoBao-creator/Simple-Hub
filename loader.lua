@@ -1,6 +1,7 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local LocalPlayer = Players.LocalPlayer
+local player = LocalPlayer
 local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 local humanoid = character:WaitForChild("Humanoid")
 local CollectList = {}
@@ -18,18 +19,20 @@ UserInputService.InputBegan:Connect(function(input, gameProcessed)
     if gameProcessed then return end
     if jetpackEnabled and (input.KeyCode == Enum.KeyCode.Space or input.UserInputType == Enum.UserInputType.Touch) then
         flying = true
-        while flying and jetpackEnabled do
-            humanoidRootPart.Velocity = Vector3.new(
-                humanoidRootPart.Velocity.X,
-                flySpeed,
-                humanoidRootPart.Velocity.Z
-            )
-            task.wait()
-        end
+        task.spawn(function()
+            while flying and jetpackEnabled do
+                humanoidRootPart.Velocity = Vector3.new(
+                    humanoidRootPart.Velocity.X,
+                    flySpeed,
+                    humanoidRootPart.Velocity.Z
+                )
+                task.wait()
+            end
+        end)
     end
 end)
 UserInputService.InputEnded:Connect(function(input, gameProcessed)
-    if (input.KeyCode == Enum.KeyCode.Space or input.UserInputType == Enum.UserInputType.Touch) then
+    if input.KeyCode == Enum.KeyCode.Space or input.UserInputType == Enum.UserInputType.Touch then
         flying = false
     end
 end)

@@ -143,12 +143,16 @@ local function collectall()
                     if plants then
                         for _, plant in ipairs(plants:GetChildren()) do
                             if isCollectable(plant.Name) then
-                                local fruitsFolder = plant:FindFirstChild("Fruits")
-                                if fruitsFolder then
-                                    for _, fruit in ipairs(fruitsFolder:GetChildren()) do
-                                        collectFruit(fruit)
-                                        task.wait(0.1)
+                                if plant:FindFirstChild("Fruits") ~= nil then  
+                                    local fruitsFolder = plant:FindFirstChild("Fruits")
+                                    if fruitsFolder then
+                                        for _, fruit in ipairs(fruitsFolder:GetChildren()) do
+                                            collectFruit(fruit)
+                                            task.wait(0.1)
+                                        end
                                     end
+                                else
+                                    collectFruit(plant)
                                 end
                             end
                         end

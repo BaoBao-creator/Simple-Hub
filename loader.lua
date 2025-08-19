@@ -41,6 +41,8 @@ local function clearLag(mainFarm)
             end
         end
     end
+end
+local function clearlag()
     for _, obj in ipairs(workspace:GetDescendants()) do
         if obj:IsA("ParticleEmitter") 
         or obj:IsA("Trail") 
@@ -208,6 +210,12 @@ farmtab:CreateToggle({
 local misctab = window:CreateTab("Misc Tab")
 misctab:CreateButton({
     Name = "Anti lag",
+    Callback = function()
+        clearlag()
+    end
+})
+misctab:CreateButton({
+    Name = "Very Super Mega Ultra Ultimate Anti lag",
     Callback = function()
         clearLag(mainFarm)
     end

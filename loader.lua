@@ -163,7 +163,7 @@ local function autofeed()
     feeding = true
     coroutine.wrap(function()
         while feeding do
-            game:GetService("ReplicatedStorage").GameEvents.BeanstalkRESubmitAllPlant:FireServer()
+            ReplicatedStorage.GameEvents.BeanstalkRESubmitAllPlant:FireServer()
             task.wait(5)
         end  
     end)()
@@ -178,6 +178,14 @@ eventtab:CreateToggle({
             autofeed()
         else
             feeding = false
+        end
+    end
+})
+eventtab:CreateButton({
+    Name = "Auto collect reward points",
+    Callback = function()
+        for i = 1, 20
+            ReplicatedStorage.GameEvents.BeanstalkREClaimReward:FireServer(i)
         end
     end
 })

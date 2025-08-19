@@ -27,23 +27,20 @@ local function getMyPlantList()
     return names
 end
 local function setFarmVisible(isVisible)
-    coroutine.wrap(function()
-        for _, farm in ipairs(mainFarm:GetChildren()) do
-            if farm:IsA("Folder") or farm:IsA("Model") then
-                for _, obj in ipairs(farm:GetDescendants()) do
-                    if obj:IsA("BasePart") then
-                        obj.Transparency = isVisible and 0 or 1
-                        obj.CanCollide = isVisible
-                    elseif obj:IsA("Decal") or obj:IsA("Texture") then
-                        obj.Transparency = isVisible and 0 or 1
-                    elseif obj:IsA("ParticleEmitter") or obj:IsA("Trail") then
-                        obj.Enabled = isVisible
-                    end
-                    task.wait(0.01)
+    for _, farm in ipairs(mainFarm:GetChildren()) do
+        if farm:IsA("Folder") or farm:IsA("Model") then
+            for _, obj in ipairs(farm:GetDescendants()) do
+                if obj:IsA("BasePart") then
+                    obj.Transparency = isVisible and 0 or 1
+                    obj.CanCollide = isVisible
+                elseif obj:IsA("Decal") or obj:IsA("Texture") then
+                    obj.Transparency = isVisible and 0 or 1
+                elseif obj:IsA("ParticleEmitter") or obj:IsA("Trail") then
+                    obj.Enabled = isVisible
                 end
             end
         end
-    end)()
+    end
 end
 local function splitString(str, sep)
     sep = sep or ","

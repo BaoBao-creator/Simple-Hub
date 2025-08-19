@@ -26,21 +26,59 @@ local function getMyPlantList()
     end
     return names
 end
-local function setFarmVisible(isVisible)
+local function clearLag(mainFarm)
     for _, farm in ipairs(mainFarm:GetChildren()) do
         if farm:IsA("Folder") or farm:IsA("Model") then
             for _, obj in ipairs(farm:GetDescendants()) do
                 if obj:IsA("BasePart") then
-                    obj.Transparency = isVisible and 0 or 1
-                    obj.CanCollide = isVisible
+                    obj.Transparency = 1
+                    obj.CanCollide = false
                 elseif obj:IsA("Decal") or obj:IsA("Texture") then
-                    obj.Transparency = isVisible and 0 or 1
+                    obj.Transparency = 1
                 elseif obj:IsA("ParticleEmitter") or obj:IsA("Trail") then
-                    obj.Enabled = isVisible
+                    obj.Enabled = false
                 end
             end
         end
     end
+    for _, obj in ipairs(workspace:GetDescendants()) do
+        if obj:IsA("ParticleEmitter") 
+        or obj:IsA("Trail") 
+        or obj:IsA("Beam") 
+        or obj:IsA("Smoke") 
+        or obj:IsA("Fire") 
+        or obj:IsA("Sparkles") then
+            obj.Enabled = false
+        elseif obj:IsA("BasePart") then
+            obj.CastShadow = false
+            obj.Material = Enum.Material.SmoothPlastic
+        elseif obj:IsA("Decal") or obj:IsA("Texture") then
+            obj.Transparency = 1
+        end
+    end
+    for _, light in ipairs(game:GetService("Lighting"):GetDescendants()) do
+        if light:IsA("PointLight") 
+        or light:IsA("SpotLight") 
+        or light:IsA("SurfaceLight") then
+            light.Enabled = false
+        end
+    end
+    local lighting = game:GetService("Lighting")
+    local sky = lighting:FindFirstChildOfClass("Sky")
+    if sky then sky:Destroy() end
+    local function removeEffect(className)
+        local e = lighting:FindFirstChildOfClass(className)
+        if e then e:Destroy() end
+    end
+    removeEffect("BloomEffect")
+    removeEffect("BlurEffect")
+    removeEffect("SunRaysEffect")
+    removeEffect("ColorCorrectionEffect")
+    removeEffect("DepthOfFieldEffect")
+    removeEffect("Atmosphere")
+    lighting.GlobalShadows = false
+    lighting.Ambient = Color3.new(1,1,1)
+    lighting.OutdoorAmbient = Color3.new(1,1,1)
 end
 local function splitString(str, sep)
     sep = sep or ","
@@ -168,9 +206,9 @@ farmtab:CreateToggle({
     end
 })
 local misctab = window:CreateTab("Misc Tab")
-misctab:CreateToggle({
+misctab:CreateButton({
     Name = "Anti lag",
-    Callback = function(v)
-        setFarmVisible(not v)
+    Callback = function()
+        clearLag(mainFarm)
     end
 })

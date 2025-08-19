@@ -39,7 +39,7 @@ local function setFarmVisible(isVisible)
                     elseif obj:IsA("ParticleEmitter") or obj:IsA("Trail") then
                         obj.Enabled = isVisible
                     end
-                    task.wait(0.05)
+                    task.wait(0.01)
                 end
             end
         end
@@ -110,7 +110,7 @@ local function collectall()
                                 if fruitsFolder then
                                     for _, fruit in ipairs(fruitsFolder:GetChildren()) do
                                         collectFruit(fruit)
-                                        task.wait(0.25)
+                                        task.wait(0.1)
                                     end
                                 end
                             end

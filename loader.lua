@@ -7,27 +7,35 @@ local humanoid = character:WaitForChild("Humanoid")
 local CollectList = {}
 local collecting = false
 local feeding = false
-local mainFarm = workspace:WaitForChild("Farm")
+local mainfarm = workspace.Farm
+local userfarm
+for _, farm in ipairs(mainfarm:GetChildren()) do
+    if farm.Important.Data.Owner.Value == LocalPlayer.Name then
+        userfarm = farm
+        break
+    end
+end
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+local function checkdis(plant) 
+    local plantpos = plant.WorldPivot.Position
+    local distance = (humanoidRootPart.Position - plantpos).Magnitude
+    if distance > 10 then
+    end
+end
 local function getMyPlantList()
-    local farmsFolder = workspace.Farm
     local names, seen = {}, {}
-    for _, farm in ipairs(farmsFolder:GetChildren()) do
-        if farm.Important.Data.Owner.Value == LocalPlayer.Name then
-            for _, plant in ipairs(farm.Important.Plants_Physical:GetChildren()) do
-                if not seen[plant.Name] then
-                    seen[plant.Name] = true
-                    table.insert(names, plant.Name)
-                end
-            end
+    for _, plant in ipairs(userfarm.Important.Plants_Physical:GetChildren()) do
+        if not seen[plant.Name] then
+            seen[plant.Name] = true
+            table.insert(names, plant.Name)
         end
     end
     return names
 end
-local function clearLag(mainFarm)
-    for _, farm in ipairs(mainFarm:GetChildren()) do
+local function clearLag()
+    for _, farm in ipairs(mainfarm:GetChildren()) do
         if farm:IsA("Folder") or farm:IsA("Model") then
             for _, obj in ipairs(farm:GetDescendants()) do
                 if obj:IsA("BasePart") then
@@ -132,30 +140,19 @@ end
 local function collectall()
     collecting = true
     coroutine.wrap(function()
-        local farmsFolder = workspace:WaitForChild("Farm")
         while collecting do
-            for _, farm in ipairs(farmsFolder:GetChildren()) do
-                local imp = farm:FindFirstChild("Important")
-                local data = imp and imp:FindFirstChild("Data")
-                local owner = data and data:FindFirstChild("Owner")
-                if owner and owner.Value == LocalPlayer.Name then
-                    local plants = imp and imp:FindFirstChild("Plants_Physical")
-                    if plants then
-                        for _, plant in ipairs(plants:GetChildren()) do
-                            if isCollectable(plant.Name) then
-                                if plant:FindFirstChild("Fruits") ~= nil then  
-                                    local fruitsFolder = plant:FindFirstChild("Fruits")
-                                    if fruitsFolder then
-                                        for _, fruit in ipairs(fruitsFolder:GetChildren()) do
-                                            collectFruit(fruit)
-                                            task.wait(0.1)
-                                        end
-                                    end
-                                else
-                                    collectFruit(plant)
-                                end
+            for _, plant in ipairs(userfarm.Important.Plants_Physical:GetChildren()) do
+                if isCollectable(plant.Name) then
+                    if plant:FindFirstChild("Fruits") ~= nil then  
+                        local fruitsFolder = plant:FindFirstChild("Fruits")
+                        if fruitsFolder then
+                            for _, fruit in ipairs(fruitsFolder:GetChildren()) do
+                                collectFruit(fruit)
+                                task.wait(0.1)
                             end
                         end
+                    else
+                        collectFruit(plant)
                     end
                 end
             end
@@ -229,6 +226,6 @@ misctab:CreateButton({
 misctab:CreateButton({
     Name = "Very Super Mega Ultra Ultimate Anti lag",
     Callback = function()
-        clearLag(mainFarm)
+        clearLag()
     end
 })

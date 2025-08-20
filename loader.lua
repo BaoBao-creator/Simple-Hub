@@ -188,7 +188,7 @@ eventtab:CreateToggle({
 eventtab:CreateButton({
     Name = "Auto collect reward points",
     Callback = function()
-        for i = 1, 20
+        for i = 1, 20 do
             ReplicatedStorage.GameEvents.BeanstalkREClaimReward:FireServer(i)
         end
     end

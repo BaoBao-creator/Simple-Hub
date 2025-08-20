@@ -9,19 +9,29 @@ local collecting = false
 local feeding = false
 local mainfarm = workspace.Farm
 local userfarm
+local tpcollect = false
 for _, farm in ipairs(mainfarm:GetChildren()) do
     if farm.Important.Data.Owner.Value == LocalPlayer.Name then
         userfarm = farm
         break
     end
 end
+local noclip = false
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-local function checkdis(plant) 
-    local plantpos = plant.WorldPivot.Position
+local function checkdis(plant)
+    local plantpos
+    if plant.WorldPivot then
+        plantpos = plant.WorldPivot.Position
+    elseif plant:IsA("BasePart") and plant.Position then
+        plantpos = plant.Position
+    else
+        return
+    end
     local distance = (humanoidRootPart.Position - plantpos).Magnitude
     if distance > 10 then
+        humanoidRootPart.CFrame = CFrame.new(plantpos)
     end
 end
 local function getMyPlantList()
@@ -34,6 +44,18 @@ local function getMyPlantList()
     end
     return names
 end
+local function setNoclip(state)
+    noclip = state
+end
+RunService.Stepped:Connect(function()
+    if noclip and humanoidRootPart then
+        for _, part in ipairs(character:GetDescendants()) do
+            if part:IsA("BasePart") and part.CanCollide then
+                part.CanCollide = false
+            end
+        end
+    end
+end)
 local function clearLag()
     for _, farm in ipairs(mainfarm:GetChildren()) do
         if farm:IsA("Folder") or farm:IsA("Model") then
@@ -147,11 +169,19 @@ local function collectall()
                         local fruitsFolder = plant:FindFirstChild("Fruits")
                         if fruitsFolder then
                             for _, fruit in ipairs(fruitsFolder:GetChildren()) do
+                                if tpcollect then
+                                    checkdis(fruit)
+                                    task.wait(0.05)
+                                end
                                 collectFruit(fruit)
                                 task.wait(0.1)
                             end
                         end
                     else
+                        if tpcollect then
+                            checkdis(plant)
+                            task.wait(0.05)
+                        end
                         collectFruit(plant)
                     end
                 end
@@ -216,7 +246,19 @@ farmtab:CreateToggle({
         end
     end
 })
+farmtab:CreateToggle({
+    Name = "Auto tp to fruits",
+    Callback = function(v)
+        tpcollect = v
+    end
+})
 local misctab = window:CreateTab("Misc Tab")
+misctab:CreateToggle({
+    Name = "Noclip",
+    Callback = function(v)
+        setNoclip(v)
+    end
+})
 misctab:CreateButton({
     Name = "Anti lag",
     Callback = function()

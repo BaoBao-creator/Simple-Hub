@@ -49,7 +49,7 @@ local function checkdis(plant)
         return
     end
     local distance = (humanoidRootPart.Position - plantpos).Magnitude
-    if distance > 10 then
+    if distance > 15 then
         humanoidRootPart.CFrame = CFrame.new(plantpos)
     end
 end

@@ -181,44 +181,25 @@ end
 local function collectall()
     collecting = true
     coroutine.wrap(function()
-        if tpcollect then
-            freezePlayer()
-        end
         while collecting do
             for _, plant in ipairs(userfarm.Important.Plants_Physical:GetChildren()) do
                 if not collecting then break end
                 if isCollectable(plant.Name) then
-                    -- Nếu có Fruits folder
                     local fruitsFolder = plant:FindFirstChild("Fruits")
                     if fruitsFolder then
                         for _, fruit in ipairs(fruitsFolder:GetChildren()) do
                             if not collecting then break end
-                            -- Nhặt liên tục cho đến khi quả biến mất hoặc collecting tắt
-                            while collecting and fruit and fruit.Parent do
-                                if tpcollect then
-                                    checkdis(fruit)
-                                    task.wait(0.05)
-                                end
-                                collectFruit(fruit)
-                                task.wait(0.1)
-                            end
-                        end
-                    else
-                        -- Nếu chỉ là plant (không có Fruits)
-                        while collecting and plant and plant.Parent do
-                            if tpcollect then
-                                checkdis(plant)
-                                task.wait(0.05)
-                            end
-                            collectFruit(plant)
+                            collectFruit(fruit)
                             task.wait(0.1)
                         end
+                    else
+                        collectFruit(plant)
+                        task.wait(0.1)
                     end
                 end
             end
             task.wait(1.5)
         end
-        unfreezePlayer()
     end)()
 end
 local function autofeed()

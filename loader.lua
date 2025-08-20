@@ -21,13 +21,11 @@ local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
 local frozen = false
-local savedWalkSpeed
-local savedJumpPower
+local savedWalkSpeed = humanoid.WalkSpeed
+local savedJumpPower = humanoid.JumpPower
 function freezePlayer()
     if not frozen then
         frozen = true
-        savedWalkSpeed = humanoid.WalkSpeed
-        savedJumpPower = humanoid.JumpPower
         humanoidRootPart.Anchored = true
         humanoid.WalkSpeed = 0
         humanoid.JumpPower = 0
@@ -39,13 +37,6 @@ function unfreezePlayer()
         humanoidRootPart.Anchored = false
         humanoid.WalkSpeed = savedWalkSpeed or 16
         humanoid.JumpPower = savedJumpPower or 50
-    end
-end
-function toggleFreeze()
-    if frozen then
-        unfreezePlayer()
-    else
-        freezePlayer()
     end
 end
 local function checkdis(plant)
@@ -191,7 +182,7 @@ local function collectall()
     collecting = true
     coroutine.wrap(function()
         if tpcollect then
-            toggleFreeze()
+            freezePlayer()
         end
         while collecting do
             for _, plant in ipairs(userfarm.Important.Plants_Physical:GetChildren()) do
@@ -219,9 +210,7 @@ local function collectall()
             end
             task.wait(1.5)
         end
-        if tpcollect then
-            toggleFreeze()
-        end
+        unfreezePlayer()
     end)()
 end
 local function autofeed()

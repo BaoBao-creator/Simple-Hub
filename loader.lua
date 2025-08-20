@@ -186,11 +186,15 @@ local function collectall()
         end
         while collecting do
             for _, plant in ipairs(userfarm.Important.Plants_Physical:GetChildren()) do
+                if not collecting then break end
                 if isCollectable(plant.Name) then
-                    if plant:FindFirstChild("Fruits") ~= nil then  
-                        local fruitsFolder = plant:FindFirstChild("Fruits")
-                        if fruitsFolder then
-                            for _, fruit in ipairs(fruitsFolder:GetChildren()) do
+                    -- Nếu có Fruits folder
+                    local fruitsFolder = plant:FindFirstChild("Fruits")
+                    if fruitsFolder then
+                        for _, fruit in ipairs(fruitsFolder:GetChildren()) do
+                            if not collecting then break end
+                            -- Nhặt liên tục cho đến khi quả biến mất hoặc collecting tắt
+                            while collecting and fruit and fruit.Parent do
                                 if tpcollect then
                                     checkdis(fruit)
                                     task.wait(0.05)
@@ -200,11 +204,15 @@ local function collectall()
                             end
                         end
                     else
-                        if tpcollect then
-                            checkdis(plant)
-                            task.wait(0.05)
+                        -- Nếu chỉ là plant (không có Fruits)
+                        while collecting and plant and plant.Parent do
+                            if tpcollect then
+                                checkdis(plant)
+                                task.wait(0.05)
+                            end
+                            collectFruit(plant)
+                            task.wait(0.1)
                         end
-                        collectFruit(plant)
                     end
                 end
             end

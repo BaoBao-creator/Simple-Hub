@@ -9,7 +9,6 @@ local collecting = false
 local feeding = false
 local mainfarm = workspace.Farm
 local userfarm
-local tpcollect = false
 for _, farm in ipairs(mainfarm:GetChildren()) do
     if farm.Important.Data.Owner.Value == LocalPlayer.Name then
         userfarm = farm
@@ -20,39 +19,6 @@ local noclip = false
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-local frozen = false
-local savedWalkSpeed = humanoid.WalkSpeed
-local savedJumpPower = humanoid.JumpPower
-function freezePlayer()
-    if not frozen then
-        frozen = true
-        humanoidRootPart.Anchored = true
-        humanoid.WalkSpeed = 0
-        humanoid.JumpPower = 0
-    end
-end
-function unfreezePlayer()
-    if frozen then
-        frozen = false
-        humanoidRootPart.Anchored = false
-        humanoid.WalkSpeed = savedWalkSpeed or 16
-        humanoid.JumpPower = savedJumpPower or 50
-    end
-end
-local function checkdis(plant)
-    local plantpos
-    if plant.WorldPivot then
-        plantpos = plant.WorldPivot.Position
-    elseif plant:IsA("BasePart") and plant.Position then
-        plantpos = plant.Position
-    else
-        return
-    end
-    local distance = (humanoidRootPart.Position - plantpos).Magnitude
-    if distance > 15 then
-        humanoidRootPart.CFrame = CFrame.new(plantpos)
-    end
-end
 local function getMyPlantList()
     local names, seen = {}, {}
     for _, plant in ipairs(userfarm.Important.Plants_Physical:GetChildren()) do
@@ -256,12 +222,6 @@ farmtab:CreateToggle({
         else
             collecting = false
         end
-    end
-})
-farmtab:CreateToggle({
-    Name = "Auto tp to fruits",
-    Callback = function(v)
-        tpcollect = v
     end
 })
 local misctab = window:CreateTab("Misc Tab")

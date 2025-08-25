@@ -41,6 +41,29 @@ RunService.Stepped:Connect(function()
         end
     end
 end)
+local function find(wl, bl)
+    for _, item in ipairs(LocalPlayer.Backpack:GetChildren()) do
+        local name = item.Name
+        local pass = true
+        for _, ww in ipairs(wl) do
+            if not name:find(ww) then
+                pass = false
+                break
+            end
+        end
+        if pass then
+            for _, bw in ipairs(bl) do
+                if name:find(bw) then
+                    pass = false
+                    break
+                end
+            end
+        end
+        if pass then
+            return item
+        end
+    end
+end
 local function clearLag()
     for _, farm in ipairs(mainfarm:GetChildren()) do
         if farm:IsA("Folder") or farm:IsA("Model") then
@@ -182,7 +205,14 @@ local function inputitem(number, type, item)
     ReplicatedStorage.GameEvents.CraftingGlobalObjectService:FireServer("InputItem",workspace.Interaction.UpdateItems.Model.GiantCraftingWorkBench,"GiantBeanstalkEventWorkbench",number,{["ItemType"] = type,["ItemData"] = {["UUID"] = item:GetAttribute("c")}})
 end
 local function craftskyrootchest()
-    inputitem(1, Holdable, find
+    inputitem(1, "Holdable", find({"Beanstalk", "kg"}, {}))
+    task.wait(0.5)
+    inputitem(2, "Holdable", find({"Beanstalk", "kg"}, {}))
+    task.wait(0.5)
+    inputitem(3, "Seed Pack", find({"Sprout Seed Pack"}, {}))
+    task.wait(0.5)
+    inputitem(4, "PetEgg", find({"Sprout Egg"}, {}))
+end
 local simpleui = loadstring(game:HttpGet("https://raw.githubusercontent.com/BaoBao-creator/Simple-Ui/main/ui.lua"))()
 local window = simpleui:CreateWindow({Name= "Simple Hub, BaoBao developer"})
 local eventtab = window:CreateTab("Event Tab")
@@ -209,6 +239,12 @@ eventtab:CreateButton({
     Callback = function()
         local gui = player.PlayerGui:WaitForChild("EventShop_UI")
         gui.Enabled = not gui.Enabled
+    end
+})
+eventtab:CreateButton({
+    Name = "Craft Skyroot Chest",
+    Callback = function()
+        task.spawn(craftskyrootchest)
     end
 })
 local farmtab = window:CreateTab("Farm Tab")

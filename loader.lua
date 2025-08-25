@@ -177,6 +177,12 @@ local function autofeed()
         end  
     end)()
 end
+local function inputitem(number, type, item)
+    -- Holdable = Fruit, Seed Pack, PetEgg
+    ReplicatedStorage.GameEvents.CraftingGlobalObjectService:FireServer("InputItem",workspace.Interaction.UpdateItems.Model.GiantCraftingWorkBench,"GiantBeanstalkEventWorkbench",number,{["ItemType"] = type,["ItemData"] = {["UUID"] = item:GetAttribute("c")}})
+end
+local function craftskyrootchest()
+    inputitem(1, Holdable, find
 local simpleui = loadstring(game:HttpGet("https://raw.githubusercontent.com/BaoBao-creator/Simple-Ui/main/ui.lua"))()
 local window = simpleui:CreateWindow({Name= "Simple Hub, BaoBao developer"})
 local eventtab = window:CreateTab("Event Tab")

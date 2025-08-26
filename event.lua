@@ -1,18 +1,15 @@
 local Players = game:GetService("Players")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local LocalPlayer = Players.LocalPlayer
-local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-local humanoid = character:WaitForChild("Humanoid")
-local CollectList = {}
-local collecting = false
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local feeding = false
-local mainfarm = workspace.Farm
-local userfarm
-for _, farm in ipairs(mainfarm:GetChildren()) do
-    if farm.Important.Data.Owner.Value == LocalPlayer.Name then
-        userfarm = farm
-        break
-    end
+local function autofeed()
+    feeding = true
+    coroutine.wrap(function()
+        while feeding do
+            ReplicatedStorage.GameEvents.BeanstalkRESubmitAllPlant:FireServer()
+            task.wait(5)
+        end  
+    end)()
 end
 local simpleui = loadstring(game:HttpGet("https://raw.githubusercontent.com/BaoBao-creator/Simple-Ui/main/ui.lua"))()
 local window = simpleui:CreateWindow({Name= "Simple Hub - Event, BaoBao developer"})

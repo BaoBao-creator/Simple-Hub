@@ -16,6 +16,7 @@ local collecting = false
 local feeding = false
 local antiafking = false
 local noclip = false
+local buying = false
 -- Game Data
 local mainfarm = workspace.Farm
 local userfarm
@@ -97,6 +98,13 @@ local function getMyPlantList()
         end
     end
     return names
+end
+-- Shop Functions
+local function buy(type, name)
+    if type == "seed" then
+        ReplicatedStorage.GameEvents.BuyTravelingMerchantShopStock:FireServer("Night Staff")
+ReplicatedStorage.GameEvents.BuyPetEgg:FireServer("Common Egg")
+ReplicatedStorage.GameEvents.BuyGearStock:FireServer(item)
 end
 -- Misc Functions
 LocalPlayer.Idled:Connect(function()

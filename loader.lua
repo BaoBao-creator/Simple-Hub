@@ -304,6 +304,7 @@ shoptab:CreateToggle({
             autobuy()
         else
             buying = false
+        end
     end
 })
 local misctab = window:CreateTab("Misc Tab")

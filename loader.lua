@@ -149,7 +149,7 @@ local function autobuy()
             end
             for _, g in ipairs(geartobuylist) do
                 for i = 1, getstock("Gear_Shop", g) do
-                    buy("gear", s)
+                    buy("gear", g)
                 end
             end
             for _, e in ipairs(eggtobuylist) do
@@ -163,7 +163,7 @@ local function autobuy()
 end
 -- Misc Functions
 local function tpui()
-    local gui = LocalPlayer.PlayerGui:FindFirstChild("Teleport_UI")
+    local gui = LocalPlayer.PlayerGui.Teleport_UI
     gui.Frame.Pets.Visible = true
     gui.Frame.Gear.Visible = true
 end

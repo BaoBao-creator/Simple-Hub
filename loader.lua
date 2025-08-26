@@ -12,6 +12,9 @@ local humanoidRootPart = character.HumanoidRootPart
 -- Game List
 local CollectList = {}
 local seedtobuylist = {}
+local geartobuylist = {}
+local eggtobuylist = {}
+local tmtobuylist = {}
 -- Game Toggle
 local collecting = false
 local feeding = false
@@ -122,7 +125,7 @@ local function isall(list)
 end
 local function getitemlist(shopname)
     local names = {}
-    for _, item in ipairs(LocalPlayer.PlayerGui[shopname]Frame.ScrollingFrame:GetChildren()) do
+    for _, item in ipairs(LocalPlayer.PlayerGui[shopname].Frame.ScrollingFrame:GetChildren()) do
         local name = item.Name
         if not name:find("Padding") and not name:find("Item_Size") and not name:find("UIListLayout") then
             table.insert(names, name)
@@ -245,7 +248,7 @@ farmtab:CreateToggle({
         end
     end
 })
-local shoptap = window:CreateTab("Shop Tab")
+local shoptab = window:CreateTab("Shop Tab")
 shoptab:CreateDropdown({
     Name = "Seed To Buy",
     Options = getitemlist("Seed_Shop"),
@@ -258,7 +261,39 @@ shoptab:CreateDropdown({
                 seedtobuylist = v
             end
         else
-            return getMyPlantList()
+            return getitemlist("Seed_Shop")
+        end
+    end
+})
+shoptab:CreateDropdown({
+    Name = "Gear To Buy",
+    Options = getitemlist("Gear_Shop"),
+    Multi = true,
+    Callback = function(v)
+        if v ~= nil then
+            if isall(v) then
+                geartobuylist = getitemlist("Gear_Shop")
+            else
+                geartobuylist = v
+            end
+        else
+            return getitemlist("Gear_Shop")
+        end
+    end
+})
+shoptab:CreateDropdown({
+    Name = "Egg To Buy",
+    Options = getitemlist("PetShop_UI"),
+    Multi = true,
+    Callback = function(v)
+        if v ~= nil then
+            if isall(v) then
+                eggtobuylist = getitemlist("PetShop_UI")
+            else
+                eggtobuylist = v
+            end
+        else
+            return getitemlist("PetShop_UI")
         end
     end
 })

@@ -11,6 +11,7 @@ local humanoid = character.Humanoid
 local humanoidRootPart = character.HumanoidRootPart
 -- Game List
 local CollectList = {}
+local seedtobuylist = {}
 -- Game Toggle
 local collecting = false
 local feeding = false
@@ -119,9 +120,16 @@ local function isall(list)
     end
     return false
 end
-local function getseedlist()
+local function getitemlist(shopname)
     local names = {}
-    for _, name in ipairs(LocalPlayer.PlayerGui.Seed_Shop
+    for _, item in ipairs(LocalPlayer.PlayerGui[shopname]Frame.ScrollingFrame:GetChildren()) do
+        local name = item.Name
+        if not name:find("Padding") and not name:find("Item_Size") and not name:find("UIListLayout") then
+            table.insert(names, name)
+        end
+    end
+    return names
+end
 local function autobuy()
     buying = true
     coroutine.wrap(function()
@@ -238,6 +246,22 @@ farmtab:CreateToggle({
     end
 })
 local shoptap = window:CreateTab("Shop Tab")
+shoptab:CreateDropdown({
+    Name = "Seed To Buy",
+    Options = getitemlist("Seed_Shop"),
+    Multi = true,
+    Callback = function(v)
+        if v ~= nil then
+            if isall(v) then
+                seedtobuylist = getitemlist("Seed_Shop")
+            else
+                seedtobuylist = v
+            end
+        else
+            return getMyPlantList()
+        end
+    end
+})
 shoptab:CreateToggle({
     Name = "Auto Buy",
     Callback = function(v)

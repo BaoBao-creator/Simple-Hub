@@ -143,11 +143,19 @@ local function autobuy()
     coroutine.wrap(function()
         while buying do
             for _, s in ipairs(seedtobuylist) do
-                for
+                for i = 1, getstock("Seed_Shop", s) do
+                    buy("seed", s)
+                end
             end
             for _, g in ipairs(geartobuylist) do
+                for i = 1, getstock("Gear_Shop", g) do
+                    buy("gear", s)
+                end
             end
             for _, e in ipairs(eggtobuylist) do
+                for i = 1, getstock("PetShop_UI", e) do
+                    buy("egg", e)
+                end
             end
         end
     end)()

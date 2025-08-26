@@ -182,8 +182,12 @@ farmtab:CreateDropdown({
     Name = "Plants to collect",
     Options = getMyPlantList(),
     Multi = true,
-    Callback = function(v) 
-        CollectList = v
+    Callback = function(v)
+        if v ~= nil then
+            CollectList = v
+        else
+            return getMyplantList()
+        end
     end
 })
 farmtab:CreateToggle({

@@ -103,8 +103,24 @@ end
 local function buy(type, name)
     if type == "seed" then
         ReplicatedStorage.GameEvents.BuyTravelingMerchantShopStock:FireServer("Night Staff")
-ReplicatedStorage.GameEvents.BuyPetEgg:FireServer("Common Egg")
-ReplicatedStorage.GameEvents.BuyGearStock:FireServer(item)
+        ReplicatedStorage.GameEvents.BuyPetEgg:FireServer("Common Egg")
+        ReplicatedStorage.GameEvents.BuyGearStock:FireServer(item)
+    end
+end
+local function isall(list)
+    for _, i in ipairs(list) do
+        if i == "all" then
+            return true
+        end
+    end
+    return false
+end
+local function autobuy()
+    buying = true
+    coroutine.wrap(function()
+        while buying do
+        end
+    end)()
 end
 -- Misc Functions
 LocalPlayer.Idled:Connect(function()
@@ -187,7 +203,7 @@ local simpleui = loadstring(game:HttpGet("https://raw.githubusercontent.com/BaoB
 local window = simpleui:CreateWindow({Name= "Simple Hub, BaoBao developer"})
 local farmtab = window:CreateTab("Farm Tab")
 farmtab:CreateDropdown({
-    Name = "Plants to collect",
+    Name = "Plants To Collect",
     Options = getMyPlantList(),
     Multi = true,
     Callback = function(v)
@@ -208,6 +224,16 @@ farmtab:CreateToggle({
         end
     end
 })
+local shoptap = window:CreateTab("Shop Tab")
+shoptab:CreateToggle({
+    Name = "Auto Buy",
+    Callback = function(v)
+        if v then
+            autobuy()
+        else
+            buying = false
+    end
+})
 local misctab = window:CreateTab("Misc Tab")
 misctab:CreateToggle({
     Name = "Anti Afk",
@@ -222,7 +248,7 @@ misctab:CreateToggle({
     end
 })
 misctab:CreateButton({
-    Name = "Anti lag",
+    Name = "Anti Lag",
     Callback = function()
         clearlag()
     end

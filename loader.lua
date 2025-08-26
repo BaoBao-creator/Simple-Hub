@@ -186,7 +186,7 @@ farmtab:CreateDropdown({
         if v ~= nil then
             CollectList = v
         else
-            return getMyplantList()
+            return getMyPlantList()
         end
     end
 })

@@ -1,12 +1,22 @@
+-- Roblox Data
 local Players = game:GetService("Players")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local LocalPlayer = Players.LocalPlayer
-local player = LocalPlayer
 local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 local humanoid = character:WaitForChild("Humanoid")
+local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+-- Roblox Services
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local VirtualUser = game:GetService("VirtualUser")
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+-- Game List
 local CollectList = {}
+-- Game Toggle
 local collecting = false
 local feeding = false
+local antiafking = false
+local noclip = false
+-- Game Data
 local mainfarm = workspace.Farm
 local userfarm
 for _, farm in ipairs(mainfarm:GetChildren()) do
@@ -15,126 +25,7 @@ for _, farm in ipairs(mainfarm:GetChildren()) do
         break
     end
 end
-local VirtualUser = game:GetService("VirtualUser")
-player.Idled:Connect(function()
-    VirtualUser:Button2Down(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
-    task.wait(1)
-    VirtualUser:Button2Up(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
-end)
-local noclip = false
-local UserInputService = game:GetService("UserInputService")
-local RunService = game:GetService("RunService")
-local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-local function getMyPlantList()
-    local names, seen = {}, {}
-    for _, plant in ipairs(userfarm.Important.Plants_Physical:GetChildren()) do
-        if not seen[plant.Name] then
-            seen[plant.Name] = true
-            table.insert(names, plant.Name)
-        end
-    end
-    return names
-end
-local function setNoclip(state)
-    noclip = state
-end
-RunService.Stepped:Connect(function()
-    if noclip and humanoidRootPart then
-        for _, part in ipairs(character:GetDescendants()) do
-            if part:IsA("BasePart") and part.CanCollide then
-                part.CanCollide = false
-            end
-        end
-    end
-end)
-local function find(wl, bl)
-    for _, item in ipairs(LocalPlayer.Backpack:GetChildren()) do
-        local name = item.Name
-        local pass = true
-        for _, ww in ipairs(wl) do
-            if not name:find(ww) then
-                pass = false
-                break
-            end
-        end
-        if pass then
-            for _, bw in ipairs(bl) do
-                if name:find(bw) then
-                    pass = false
-                    break
-                end
-            end
-        end
-        if pass then
-            return item
-        end
-    end
-end
-local function clearLag()
-    for _, farm in ipairs(mainfarm:GetChildren()) do
-        if farm:IsA("Folder") or farm:IsA("Model") then
-            for _, obj in ipairs(farm:GetDescendants()) do
-                if obj:IsA("BasePart") then
-                    obj.Transparency = 1
-                    obj.CanCollide = false
-                elseif obj:IsA("Decal") or obj:IsA("Texture") then
-                    obj.Transparency = 1
-                elseif obj:IsA("ParticleEmitter") or obj:IsA("Trail") then
-                    obj.Enabled = false
-                end
-            end
-        end
-    end
-end
-local function clearlag()
-    for _, obj in ipairs(workspace:GetDescendants()) do
-        if obj:IsA("ParticleEmitter") 
-        or obj:IsA("Trail") 
-        or obj:IsA("Beam") 
-        or obj:IsA("Smoke") 
-        or obj:IsA("Fire") 
-        or obj:IsA("Sparkles") then
-            obj.Enabled = false
-        elseif obj:IsA("BasePart") then
-            obj.CastShadow = false
-            obj.Material = Enum.Material.SmoothPlastic
-        elseif obj:IsA("Decal") or obj:IsA("Texture") then
-            obj.Transparency = 1
-        end
-    end
-    for _, light in ipairs(game:GetService("Lighting"):GetDescendants()) do
-        if light:IsA("PointLight") 
-        or light:IsA("SpotLight") 
-        or light:IsA("SurfaceLight") then
-            light.Enabled = false
-        end
-    end
-    local lighting = game:GetService("Lighting")
-    local sky = lighting:FindFirstChildOfClass("Sky")
-    if sky then sky:Destroy() end
-    local function removeEffect(className)
-        local e = lighting:FindFirstChildOfClass(className)
-        if e then e:Destroy() end
-    end
-    removeEffect("BloomEffect")
-    removeEffect("BlurEffect")
-    removeEffect("SunRaysEffect")
-    removeEffect("ColorCorrectionEffect")
-    removeEffect("DepthOfFieldEffect")
-    removeEffect("Atmosphere")
-    lighting.GlobalShadows = false
-    lighting.Ambient = Color3.new(1,1,1)
-    lighting.OutdoorAmbient = Color3.new(1,1,1)
-end
-local function splitString(str, sep)
-    sep = sep or ","
-    local result = {}
-    for token in string.gmatch(str, "([^"..sep.."]+)") do
-        token = token:match("^%s*(.-)%s*$")
-        table.insert(result, token)
-    end
-    return result
-end
+-- Farm functions
 local function isCollectable(plantName)
     for _, name in ipairs(CollectList) do
         if plantName == name then
@@ -197,43 +88,95 @@ local function collectall()
         end
     end)()
 end
-local function autofeed()
-    feeding = true
-    coroutine.wrap(function()
-        while feeding do
-            ReplicatedStorage.GameEvents.BeanstalkRESubmitAllPlant:FireServer()
-            task.wait(5)
-        end  
-    end)()
+local function getMyPlantList()
+    local names, seen = {}, {}
+    for _, plant in ipairs(userfarm.Important.Plants_Physical:GetChildren()) do
+        if not seen[plant.Name] then
+            seen[plant.Name] = true
+            table.insert(names, plant.Name)
+        end
+    end
+    return names
 end
+-- Misc Functions
+player.Idled:Connect(function()
+    if antiafking then
+        VirtualUser:Button2Down(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
+        task.wait(1)
+        VirtualUser:Button2Up(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
+    end
+end)
+local function setNoclip(state)
+    noclip = state
+end
+RunService.Stepped:Connect(function()
+    if noclip and humanoidRootPart then
+        for _, part in ipairs(character:GetDescendants()) do
+            if part:IsA("BasePart") and part.CanCollide then
+                part.CanCollide = false
+            end
+        end
+    end
+end)
+local function clearLag()
+    for _, farm in ipairs(mainfarm:GetChildren()) do
+        if farm:IsA("Folder") or farm:IsA("Model") then
+            for _, obj in ipairs(farm:GetDescendants()) do
+                if obj:IsA("BasePart") then
+                    obj.Transparency = 1
+                    obj.CanCollide = false
+                elseif obj:IsA("Decal") or obj:IsA("Texture") then
+                    obj.Transparency = 1
+                elseif obj:IsA("ParticleEmitter") or obj:IsA("Trail") then
+                    obj.Enabled = false
+                end
+            end
+        end
+    end
+end
+local function clearlag()
+    for _, obj in ipairs(workspace:GetDescendants()) do
+        if obj:IsA("ParticleEmitter") 
+        or obj:IsA("Trail") 
+        or obj:IsA("Beam") 
+        or obj:IsA("Smoke") 
+        or obj:IsA("Fire") 
+        or obj:IsA("Sparkles") then
+            obj.Enabled = false
+        elseif obj:IsA("BasePart") then
+            obj.CastShadow = false
+            obj.Material = Enum.Material.SmoothPlastic
+        elseif obj:IsA("Decal") or obj:IsA("Texture") then
+            obj.Transparency = 1
+        end
+    end
+    for _, light in ipairs(game:GetService("Lighting"):GetDescendants()) do
+        if light:IsA("PointLight") 
+        or light:IsA("SpotLight") 
+        or light:IsA("SurfaceLight") then
+            light.Enabled = false
+        end
+    end
+    local lighting = game:GetService("Lighting")
+    local sky = lighting:FindFirstChildOfClass("Sky")
+    if sky then sky:Destroy() end
+    local function removeEffect(className)
+        local e = lighting:FindFirstChildOfClass(className)
+        if e then e:Destroy() end
+    end
+    removeEffect("BloomEffect")
+    removeEffect("BlurEffect")
+    removeEffect("SunRaysEffect")
+    removeEffect("ColorCorrectionEffect")
+    removeEffect("DepthOfFieldEffect")
+    removeEffect("Atmosphere")
+    lighting.GlobalShadows = false
+    lighting.Ambient = Color3.new(1,1,1)
+    lighting.OutdoorAmbient = Color3.new(1,1,1)
+end
+-- UI
 local simpleui = loadstring(game:HttpGet("https://raw.githubusercontent.com/BaoBao-creator/Simple-Ui/main/ui.lua"))()
 local window = simpleui:CreateWindow({Name= "Simple Hub, BaoBao developer"})
-local eventtab = window:CreateTab("Event Tab")
-eventtab:CreateToggle({
-    Name = "Auto feed to beanstalk",
-    Callback = function(v)
-        if v then
-            autofeed()
-        else
-            feeding = false
-        end
-    end
-})
-eventtab:CreateButton({
-    Name = "Auto collect reward points",
-    Callback = function()
-        for i = 1, 20 do
-            ReplicatedStorage.GameEvents.BeanstalkREClaimReward:FireServer(i)
-        end
-    end
-})
-eventtab:CreateButton({
-    Name = "Open/close event shop",
-    Callback = function()
-        local gui = player.PlayerGui:WaitForChild("EventShop_UI")
-        gui.Enabled = not gui.Enabled
-    end
-})
 local farmtab = window:CreateTab("Farm Tab")
 farmtab:CreateDropdown({
     Name = "Plants to collect",
@@ -255,6 +198,12 @@ farmtab:CreateToggle({
 })
 local misctab = window:CreateTab("Misc Tab")
 misctab:CreateToggle({
+    Name = "Anti Afk",
+    Callback = function(v)
+        antiafking = v
+    end
+})
+misctab:CreateToggle({
     Name = "Noclip",
     Callback = function(v)
         setNoclip(v)
@@ -267,7 +216,7 @@ misctab:CreateButton({
     end
 })
 misctab:CreateButton({
-    Name = "Very Super Mega Ultra Ultimate Anti lag",
+    Name = "Invisible Farm",
     Callback = function()
         clearLag()
     end

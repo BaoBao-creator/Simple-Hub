@@ -117,7 +117,7 @@ local function buy(type, name)
 end
 local function isall(list)
     for _, i in ipairs(list) do
-        if i == "all" then
+        if i == "All" then
             return true
         end
     end
@@ -135,6 +135,9 @@ local function getitemlist(shopname)
         if not name:find("Padding") and not name:find("Item_Size") and not name:find("UIListLayout") then
             table.insert(names, name)
         end
+    end
+    if names ~= {} then
+        table.insert(names, 1, "All")
     end
     return names
 end

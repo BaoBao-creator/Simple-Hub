@@ -123,6 +123,11 @@ local function isall(list)
     end
     return false
 end
+local function getstock(shopName, itemName)
+    local stockText = LocalPlayer.PlayerGui[shopName].Frame.ScrollingFrame[itemName].Main_Frame.Stock_Text
+    local number = stockText.Text:match("X(%d+)%sStock")
+    return tonumber(number) or 0
+end
 local function getitemlist(shopname)
     local names = {}
     for _, item in ipairs(LocalPlayer.PlayerGui[shopname].Frame.ScrollingFrame:GetChildren()) do
@@ -137,6 +142,13 @@ local function autobuy()
     buying = true
     coroutine.wrap(function()
         while buying do
+            for _, s in ipairs(seedtobuylist) do
+                for
+            end
+            for _, g in ipairs(geartobuylist) do
+            end
+            for _, e in ipairs(eggtobuylist) do
+            end
         end
     end)()
 end

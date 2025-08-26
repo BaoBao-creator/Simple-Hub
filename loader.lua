@@ -99,7 +99,7 @@ local function getMyPlantList()
     return names
 end
 -- Misc Functions
-player.Idled:Connect(function()
+LocalPlayer.Idled:Connect(function()
     if antiafking then
         VirtualUser:Button2Down(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
         task.wait(1)

@@ -123,6 +123,9 @@ local function autobuy()
     end)()
 end
 -- Misc Functions
+local function tpui()
+    local gui = LocalPlayer.PlayerGui:WaitForChild("EventShop_UI")
+    gui.Enabled = not gui.Enabled
 LocalPlayer.Idled:Connect(function()
     if antiafking then
         VirtualUser:Button2Down(Vector2.new(0,0), workspace.CurrentCamera.CFrame)

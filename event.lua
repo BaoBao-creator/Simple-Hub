@@ -35,7 +35,7 @@ eventtab:CreateButton({
 eventtab:CreateButton({
     Name = "Open/close event shop",
     Callback = function()
-        local gui = LocalPlayerp.PlayerGui:WaitForChild("EventShop_UI")
+        local gui = LocalPlayer.PlayerGui:WaitForChild("EventShop_UI")
         gui.Enabled = not gui.Enabled
     end
 })

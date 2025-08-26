@@ -157,6 +157,7 @@ local function autobuy()
                     buy("egg", e)
                 end
             end
+            task.wait(60)
         end
     end)()
 end

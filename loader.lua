@@ -1,14 +1,14 @@
--- Roblox Data
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
-local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-local humanoid = character:WaitForChild("Humanoid")
-local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
 -- Roblox Services
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local VirtualUser = game:GetService("VirtualUser")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
+-- Roblox Data
+local LocalPlayer = Players.LocalPlayer
+local character = LocalPlayer.Character
+local humanoid = character.Humanoid
+local humanoidRootPart = character.HumanoidRootPart
 -- Game List
 local CollectList = {}
 -- Game Toggle
@@ -102,9 +102,13 @@ end
 -- Shop Functions
 local function buy(type, name)
     if type == "seed" then
-        ReplicatedStorage.GameEvents.BuyTravelingMerchantShopStock:FireServer("Night Staff")
-        ReplicatedStorage.GameEvents.BuyPetEgg:FireServer("Common Egg")
-        ReplicatedStorage.GameEvents.BuyGearStock:FireServer(item)
+        ReplicatedStorage.GameEvents.BuySeedStock:FireServer(name)
+    elseif type == "gear" then
+        ReplicatedStorage.GameEvents.BuyGearStock:FireServer(name)
+    elseif type == "egg" then
+        ReplicatedStorage.GameEvents.BuyPetEgg:FireServer(name)
+    elseif type == "tm" then
+        ReplicatedStorage.GameEvents.BuyTravelingMerchantShopStock:FireServer(name)
     end
 end
 local function isall(list)
@@ -115,6 +119,9 @@ local function isall(list)
     end
     return false
 end
+local function getseedlist()
+    local names = {}
+    for _, name in ipairs(LocalPlayer.PlayerGui.Seed_Shop
 local function autobuy()
     buying = true
     coroutine.wrap(function()
@@ -124,8 +131,11 @@ local function autobuy()
 end
 -- Misc Functions
 local function tpui()
-    local gui = LocalPlayer.PlayerGui:WaitForChild("EventShop_UI")
-    gui.Enabled = not gui.Enabled
+    local gui = LocalPlayer.PlayerGui:FindFirstChild("Teleport_UI")
+    gui.Frame.Pets.Visible = true
+    gui.Frame.Gear.Visible = true
+end
+tpui()
 LocalPlayer.Idled:Connect(function()
     if antiafking then
         VirtualUser:Button2Down(Vector2.new(0,0), workspace.CurrentCamera.CFrame)

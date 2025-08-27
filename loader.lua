@@ -101,6 +101,9 @@ local function getMyPlantList()
             table.insert(names, plant.Name)
         end
     end
+    if names ~= {} then
+        table.insert(names, 1, "All")
+    end
     return names
 end
 -- Shop Functions
@@ -123,11 +126,6 @@ local function isall(list)
     end
     return false
 end
-local function getstock(shopName, itemName)
-    local stockText = LocalPlayer.PlayerGui[shopName].Frame.ScrollingFrame[itemName].Main_Frame.Stock_Text
-    local number = stockText.Text:match("X(%d+)%sStock")
-    return tonumber(number) or 0
-end
 local function getitemlist(shopname)
     local names = {}
     for _, item in ipairs(LocalPlayer.PlayerGui[shopname].Frame.ScrollingFrame:GetChildren()) do
@@ -146,19 +144,18 @@ local function autobuy()
     coroutine.wrap(function()
         while buying do
             for _, s in ipairs(seedtobuylist) do
-                for i = 1, getstock("Seed_Shop", s) do
-                    buy("seed", s)
+                if s == "Carrot" then
+                    for i = 1, 30 do
+                        buy("seed", s)
+                    end
                 end
+                buy("seed", s)
             end
             for _, g in ipairs(geartobuylist) do
-                for i = 1, getstock("Gear_Shop", g) do
-                    buy("gear", g)
-                end
+                buy("gear", g)
             end
             for _, e in ipairs(eggtobuylist) do
-                for i = 1, getstock("PetShop_UI", e) do
-                    buy("egg", e)
-                end
+                buy("egg", e)
             end
             task.wait(60)
         end

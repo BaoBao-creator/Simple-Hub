@@ -353,3 +353,9 @@ misctab:CreateButton({
         clearLag()
     end
 })
+misctab:CreateButton({
+    Name = "Load Event Tab",
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/BaoBao-creator/Simple-Hub/main/event.lua"))()
+    end
+})

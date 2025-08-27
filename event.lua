@@ -39,3 +39,15 @@ eventtab:CreateButton({
         gui.Enabled = not gui.Enabled
     end
 })
+eventtab:CreateButton({
+    Name = "Auto buy event shop",
+    Callback = function()
+        ReplicatedStorage.GameEvents.BuyEventShopStock:FireServer("Skyroot Chest")
+    end
+})
+eventtab:CreateButton({
+    Name = "Feed To Giant",
+    Callback = function()
+        ReplicatedStorage.GameEvents.FeedNPC_RE:FireServer("Giant")
+    end
+})

@@ -72,7 +72,7 @@ eventtab:CreateDropdown({
         end
     end
 })
-eventtab:CreateButton({
+eventtab:CreateToggle({
     Name = "Auto buy event shop",
     Callback = function()
         autobuy()

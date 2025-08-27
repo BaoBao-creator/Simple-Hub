@@ -101,7 +101,7 @@ local function getMyPlantList()
             table.insert(names, plant.Name)
         end
     end
-    if names ~= {} then
+    if #names > 0 then
         table.insert(names, 1, "All")
     end
     return names
@@ -139,7 +139,7 @@ local function getitemlist(shopname)
             table.insert(names, name)
         end
     end
-    if names ~= {} then
+    if #names > 0 then
         table.insert(names, 1, "All")
     end
     return names
@@ -155,7 +155,7 @@ local function autobuy()
             end
             for _, g in ipairs(geartobuylist) do
                 for i = 1, getstock("Gear_Shop", g) do
-                    buy("gear, g)
+                    buy("gear", g)
                 end
             end
             for _, e in ipairs(eggtobuylist) do
@@ -259,7 +259,11 @@ farmtab:CreateDropdown({
     Multi = true,
     Callback = function(v)
         if v ~= nil then
-            CollectList = v
+            if isall(v) then
+                CollectList = getMyPlantList()
+            else
+                CollectList = v
+            end
         else
             return getMyPlantList()
         end

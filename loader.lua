@@ -81,11 +81,11 @@ local function collectall()
                         for _, fruit in ipairs(fruitsFolder:GetChildren()) do
                             if not collecting then break end
                             collectFruit(fruit)
-                            task.wait(0.1)
+                            task.wait(0.01)
                         end
                     else
                         collectFruit(plant)
-                        task.wait(0.1)
+                        task.wait(0.01)
                     end
                 end
             end
@@ -149,19 +149,17 @@ local function autobuy()
     coroutine.wrap(function()
         while buying do
             for _, s in ipairs(seedtobuylist) do
-                for i = 1, getstock("Seed_Shop", s) do
+                while getstock("Seed_Shop", s) > 0 do
                     buy("seed", s)
                 end
             end
-            task.wait(1)
             for _, g in ipairs(geartobuylist) do
-                for i = 1, getstock("Gear_Shop", g) do
+                while getstock("Gear_Shop", g) > 0 do
                     buy("gear", g)
                 end
             end
-            task.wait(1)
             for _, e in ipairs(eggtobuylist) do
-                for i = 1, getstock("PetShop_UI", e) do
+                while getstock("PetShop_UI", e) > 0 do
                     buy("egg", e)
                 end
             end

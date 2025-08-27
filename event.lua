@@ -3,7 +3,7 @@ local LocalPlayer = Players.LocalPlayer
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local feeding = false
 local buying = false
-local eventshop = {"All", "Sprout Seed Pack", "Sprout Egg", "Mandrake Seed", "Sprout Crate", "Silver Fertilizer", "Canary Melon Seed", "Amberheart", "Spriggan", "Skyroot Chest", "Can Of Beans", "Griffin Statue", "Bouncy Mushroom", "Glowpod", "Flare Melon", "Pet Mutation Shard Giantbean", "Gnome"}
+local eventshop = {"All", "Sprout Seed Pack", "Sprout Egg", "Mandrake", "Sprout Crate", "Silver Fertilizer", "Canary Melon", "Amberheart", "Spriggan", "Skyroot Chest", "Can Of Beans", "Griffin Statue", "Bouncy Mushroom", "Glowpod", "Flare Melon", "Pet Mutation Shard Giantbean", "Gnome"}
 local buylist = {}
 local function autofeed()
     feeding = true

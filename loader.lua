@@ -153,11 +153,13 @@ local function autobuy()
                     buy("seed", s)
                 end
             end
+            task.wait(1)
             for _, g in ipairs(geartobuylist) do
                 for i = 1, getstock("Gear_Shop", g) do
                     buy("gear", g)
                 end
             end
+            task.wait(1)
             for _, e in ipairs(eggtobuylist) do
                 for i = 1, getstock("PetShop_UI", e) do
                     buy("egg", e)

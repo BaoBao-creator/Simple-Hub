@@ -2,7 +2,7 @@ local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local feeding = false
-local eventshop = {"All", "Sprout Crate", "Silver Fertilizer", "Canary Melon Seed", "Amberheart", "Spriggan"}
+local eventshop = {"All", "Sprout Seed Pack", "Sprout Egg", "Mandrake Seed", "Sprout Crate", "Silver Fertilizer", "Canary Melon Seed", "Amberheart", "Spriggan"}
 local function autofeed()
     feeding = true
     coroutine.wrap(function()

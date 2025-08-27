@@ -11,6 +11,9 @@ local humanoid = character.Humanoid
 local humanoidRootPart = character.HumanoidRootPart
 -- Game List
 local CollectList = {}
+local seedshop
+local gearshop
+local eggshop
 local seedtobuylist = {}
 local geartobuylist = {}
 local eggtobuylist = {}
@@ -144,23 +147,38 @@ local function getitemlist(shopname)
     end
     return names
 end
+seedshop = getitemlist("Seed_Shop")
+gearshop = getitemlist("Gear_Shop")
+eggshop = getitemlist("PetShop_UI")
 local function autobuy()
     buying = true
     coroutine.wrap(function()
         while buying do
+            if isall(seedtobuylist) then
+                seedtobuylist = seedshop
+            end
+            if isall(geartobuylist) then
+                geartobuylist = gearshop
+            end
+            if isall(eggtobuylist) then
+                eggtobuylist = eggshop
+            end
             for _, s in ipairs(seedtobuylist) do
                 while getstock("Seed_Shop", s) > 0 do
                     buy("seed", s)
+                    task.wait(0.05)
                 end
             end
             for _, g in ipairs(geartobuylist) do
                 while getstock("Gear_Shop", g) > 0 do
                     buy("gear", g)
+                    task.wait(0.05)
                 end
             end
             for _, e in ipairs(eggtobuylist) do
                 while getstock("PetShop_UI", e) > 0 do
                     buy("egg", e)
+                    task.wait(0.05)
                 end
             end
             task.wait(60)
@@ -282,49 +300,37 @@ farmtab:CreateToggle({
 local shoptab = window:CreateTab("Shop Tab")
 shoptab:CreateDropdown({
     Name = "Seed To Buy",
-    Options = getitemlist("Seed_Shop"),
+    Options = seedshop,
     Multi = true,
     Callback = function(v)
         if v ~= nil then
-            if isall(v) then
-                seedtobuylist = getitemlist("Seed_Shop")
-            else
-                seedtobuylist = v
-            end
+            seedtobuylist = v
         else
-            return getitemlist("Seed_Shop")
+            return seedshop
         end
     end
 })
 shoptab:CreateDropdown({
     Name = "Gear To Buy",
-    Options = getitemlist("Gear_Shop"),
+    Options = gearshop,
     Multi = true,
     Callback = function(v)
         if v ~= nil then
-            if isall(v) then
-                geartobuylist = getitemlist("Gear_Shop")
-            else
-                geartobuylist = v
-            end
+            geartobuylist = v
         else
-            return getitemlist("Gear_Shop")
+            return gearshop
         end
     end
 })
 shoptab:CreateDropdown({
     Name = "Egg To Buy",
-    Options = getitemlist("PetShop_UI"),
+    Options = eggshop,
     Multi = true,
     Callback = function(v)
         if v ~= nil then
-            if isall(v) then
-                eggtobuylist = getitemlist("PetShop_UI")
-            else
-                eggtobuylist = v
-            end
+            eggtobuylist = v
         else
-            return getitemlist("PetShop_UI")
+            return eggshop
         end
     end
 })

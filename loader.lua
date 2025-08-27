@@ -264,10 +264,7 @@ farmtab:CreateDropdown({
     Callback = function(v)
         if v ~= nil then
             if isall(v) then
-                if isall(v) then
-                    CollectList = getMyPlantList()
-                else
-                    CollectList = v
+                CollectList = getMyPlantList()
             else
                 CollectList = v
             end

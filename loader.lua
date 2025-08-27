@@ -11,9 +11,6 @@ local humanoid = character.Humanoid
 local humanoidRootPart = character.HumanoidRootPart
 -- Game List
 local CollectList = {}
-local seedshop
-local gearshop
-local eggshop
 local seedtobuylist = {}
 local geartobuylist = {}
 local eggtobuylist = {}
@@ -104,11 +101,9 @@ local function getMyPlantList()
             table.insert(names, plant.Name)
         end
     end
-    if #names > 0 then
-        table.insert(names, 1, "All")
-    end
     return names
 end
+local collectui = {"All", table.unpack(getMyPlantList())}
 -- Shop Functions
 local function getstock(shopName, itemName)
     local stockText = LocalPlayer.PlayerGui[shopName].Frame.ScrollingFrame[itemName].Main_Frame.Stock_Text
@@ -142,43 +137,34 @@ local function getitemlist(shopname)
             table.insert(names, name)
         end
     end
-    if #names > 0 then
-        table.insert(names, 1, "All")
-    end
     return names
 end
-seedshop = getitemlist("Seed_Shop")
-gearshop = getitemlist("Gear_Shop")
-eggshop = getitemlist("PetShop_UI")
+local seedshop = getitemlist("Seed_Shop")
+local gearshop = getitemlist("Gear_Shop")
+local eggshop = getitemlist("PetShop_UI")
+local seedui = {"All", table.unpack(seedshop)}
+local gearui = {"All", table.unpack(gearshop)}
+local eggui = {"All", table.unpack(eggshop)}
 local function autobuy()
     buying = true
     coroutine.wrap(function()
         while buying do
-            if isall(seedtobuylist) then
-                seedtobuylist = seedshop
-            end
-            if isall(geartobuylist) then
-                geartobuylist = gearshop
-            end
-            if isall(eggtobuylist) then
-                eggtobuylist = eggshop
-            end
             for _, s in ipairs(seedtobuylist) do
                 while getstock("Seed_Shop", s) > 0 do
                     buy("seed", s)
-                    task.wait(0.05)
+                    task.wait(0.01)
                 end
             end
             for _, g in ipairs(geartobuylist) do
                 while getstock("Gear_Shop", g) > 0 do
                     buy("gear", g)
-                    task.wait(0.05)
+                    task.wait(0.01)
                 end
             end
             for _, e in ipairs(eggtobuylist) do
                 while getstock("PetShop_UI", e) > 0 do
                     buy("egg", e)
-                    task.wait(0.05)
+                    task.wait(0.01)
                 end
             end
             task.wait(60)
@@ -273,17 +259,20 @@ local window = simpleui:CreateWindow({Name= "Simple Hub, BaoBao developer"})
 local farmtab = window:CreateTab("Farm Tab")
 farmtab:CreateDropdown({
     Name = "Plants To Collect",
-    Options = getMyPlantList(),
+    Options = collectui,
     Multi = true,
     Callback = function(v)
         if v ~= nil then
             if isall(v) then
-                CollectList = getMyPlantList()
+                if isall(v) then
+                    CollectList = getMyPlantList()
+                else
+                    CollectList = v
             else
                 CollectList = v
             end
         else
-            return getMyPlantList()
+            return collectui
         end
     end
 })
@@ -300,37 +289,49 @@ farmtab:CreateToggle({
 local shoptab = window:CreateTab("Shop Tab")
 shoptab:CreateDropdown({
     Name = "Seed To Buy",
-    Options = seedshop,
+    Options = seedui,
     Multi = true,
     Callback = function(v)
         if v ~= nil then
-            seedtobuylist = v
+            if isall(v) then
+                seedtobuylist = seedshop
+            else
+                seedtobuylist = v
+            end
         else
-            return seedshop
+            return seedui
         end
     end
 })
 shoptab:CreateDropdown({
     Name = "Gear To Buy",
-    Options = gearshop,
+    Options = gearui,
     Multi = true,
     Callback = function(v)
         if v ~= nil then
-            geartobuylist = v
+            if isall(v) then
+                geartobuylist = gearshop
+            else
+                geartobuylist = v
+            end
         else
-            return gearshop
+            return gearui
         end
     end
 })
 shoptab:CreateDropdown({
     Name = "Egg To Buy",
-    Options = eggshop,
+    Options = eggui,
     Multi = true,
     Callback = function(v)
         if v ~= nil then
-            eggtobuylist = v
+            if isall(v) then
+                eggtobuylist = eggshop
+            else
+                eggtobuylist = v
+            end
         else
-            return eggshop
+            return eggui
         end
     end
 })

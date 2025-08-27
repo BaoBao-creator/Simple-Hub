@@ -107,6 +107,11 @@ local function getMyPlantList()
     return names
 end
 -- Shop Functions
+local function getstock(shopName, itemName)
+    local stockText = LocalPlayer.PlayerGui[shopName].Frame.ScrollingFrame[itemName].Main_Frame.Stock_Text
+    local number = stockText.Text:match("X(%d+)%sStock")
+    return tonumber(number) or 0
+end
 local function buy(type, name)
     if type == "seed" then
         ReplicatedStorage.GameEvents.BuySeedStock:FireServer(name)
@@ -144,18 +149,19 @@ local function autobuy()
     coroutine.wrap(function()
         while buying do
             for _, s in ipairs(seedtobuylist) do
-                if s == "Carrot" then
-                    for i = 1, 30 do
-                        buy("seed", s)
-                    end
+                for i = 1, getstock("Seed_Shop", s) do
+                    buy("seed", s)
                 end
-                buy("seed", s)
             end
             for _, g in ipairs(geartobuylist) do
-                buy("gear", g)
+                for i = 1, getstock("Gear_Shop", g) do
+                    buy("gear, g)
+                end
             end
             for _, e in ipairs(eggtobuylist) do
-                buy("egg", e)
+                for i = 1, getstock("PetShop_UI", e) do
+                    buy("egg", e)
+                end
             end
             task.wait(60)
         end

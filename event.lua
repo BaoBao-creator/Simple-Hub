@@ -3,7 +3,7 @@ local LocalPlayer = Players.LocalPlayer
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local feeding = false
 local buying = false
-local eventshop = {"All", "Sprout Seed Pack", "Sprout Egg", "Mandrake", "Sprout Crate", "Silver Fertilizer", "Canary Melon", "Amberheart", "Spriggan", "Skyroot Chest", "Can Of Beans", "Griffin Statue", "Bouncy Mushroom", "Glowpod", "Flare Melon", "Pet Mutation Shard Giantbean", "Gnome"}
+local eventshop = {"Sprout Seed Pack", "Sprout Egg", "Mandrake", "Sprout Crate", "Silver Fertilizer", "Canary Melon", "Amberheart", "Spriggan", "Skyroot Chest", "Can Of Beans", "Griffin Statue", "Bouncy Mushroom", "Glowpod", "Flare Melon", "Pet Mutation Shard Giantbean", "Gnome"}
 local buylist = {}
 local function autofeed()
     feeding = true
@@ -57,7 +57,7 @@ eventtab:CreateButton({
 })
 eventtab:CreateDropdown({
     Name = "Item To Buy",
-    Options = eventshop,
+    Options = {"All", table.unpack(eventshop)},
     Multi = true,
     Callback = function(v)
         if v ~= nil then

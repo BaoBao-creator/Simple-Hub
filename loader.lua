@@ -15,7 +15,12 @@ local seedtobuylist = {}
 local geartobuylist = {}
 local eggtobuylist = {}
 local tmtobuylist = {}
-local merchantshop = {"Mutation Spray Cloudtouched", }
+local gnomeshop = {}
+local skyshop = {}
+local honeyshop = {}
+local summershop = {}
+local sprayshop = {}
+local sprinklershop = {}
 -- Game Toggle
 local collecting = false
 local feeding = false

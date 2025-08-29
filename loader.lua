@@ -18,7 +18,7 @@ local tmtobuylist = {}
 local gnomeshop = {"Common Gnome Crate", "Farmers Gnome Crate", "Classic Gnome Crate", "Iconic Gnome Crate"}
 local skyshop = {"Night Staff", "Star Caller", "Mutation Spray Cloudtouched"}
 local honeyshop = {"Flower Seed Pack", "Honey Sprinkler", "Bee Egg", "Bee Crate", "Honey Crafters Crate"}
-local summershop = {}
+local summershop = {"Cauliflower", "Rafflesia", "Green Apple", "Avocado", "Banana", "Pineapple", "Kiwi", "Bell Pepper", "Prickly Pear", "Loquat", "Feijoa", "Pitcher Plant", "Common Summer Egg", "Rare Summer Egg", "Paradise Egg"}
 local sprayshop = {}
 local sprinklershop = {}
 -- Game Toggle

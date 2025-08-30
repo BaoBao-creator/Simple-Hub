@@ -111,20 +111,15 @@ local function getMyPlantList()
 end
 local collectui = {"All", table.unpack(getMyPlantList())}
 -- Shop Functions
-local function stocking(name)
-    local merchantshop = LocalPlayer.PlayerGui.TravelingMerchantShop_UI.Frame.ScrollingFrame
-    local item = merchantshop:FindFirtsChild(name)
-    if item then
-        local text = LocalPlayer.PlayerGui.TravelingMerchantShop_UI.Frame.ScrollingFrame[itemName].Main_Frame.Stock_Text.Text
-        return string.gmatch(text, "%d+")
-    else
-        return 0
-    end
-end
 local function getstock(shopName, itemName)
-    local stockText = LocalPlayer.PlayerGui[shopName].Frame.ScrollingFrame[itemName].Main_Frame.Stock_Text
-    local number = stockText.Text:match("X(%d+)%sStock")
-    return tonumber(number) or 0
+    local shop = LocalPlayer.PlayerGui[shopName].Frame.ScrollingFrame
+    local item = shop:FindFirstChild(itemName)
+    if item then
+        local stockText = item.Main_Frame.Stock_Text.Text
+        local number = string:match(stockText, "%d+")
+        return tonumber(number) or 0
+    end
+    return 0
 end
 local function buy(type, name)
     if type == "seed" then

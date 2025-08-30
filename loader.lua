@@ -111,6 +111,16 @@ local function getMyPlantList()
 end
 local collectui = {"All", table.unpack(getMyPlantList())}
 -- Shop Functions
+local function stocking(name)
+    local merchantshop = LocalPlayer.PlayerGui.TravelingMerchantShop_UI.Frame.ScrollingFrame
+    local item = merchantshop:FindFirtsChild(name)
+    if item then
+        local text = LocalPlayer.PlayerGui.TravelingMerchantShop_UI.Frame.ScrollingFrame[itemName].Main_Frame.Stock_Text.Text
+        return string.gmatch(text, "%d+")
+    else
+        return 0
+    end
+end
 local function getstock(shopName, itemName)
     local stockText = LocalPlayer.PlayerGui[shopName].Frame.ScrollingFrame[itemName].Main_Frame.Stock_Text
     local number = stockText.Text:match("X(%d+)%sStock")

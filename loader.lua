@@ -41,6 +41,25 @@ for _, farm in ipairs(mainfarm:GetChildren()) do
         break
     end
 end
+-- Shared functions 
+local function DDWithAll(tab, name, selectionlist, listRef)
+    tab:CreateDropdown({
+        Name = name,
+        Options = a(selectionlist),
+        Multi = true,
+        Callback = function(v)
+            if v ~= nil then
+                if isall(v) then
+                    _G[listRef] = selectionlist
+                else
+                    _G[listRef] = v
+                end
+            else
+                return a(selectionlist)
+            end
+        end
+    })
+end
 -- Farm functions
 local function isCollectable(plantName)
     for _, name in ipairs(CollectList) do
@@ -270,22 +289,7 @@ end
 local simpleui = loadstring(game:HttpGet("https://raw.githubusercontent.com/BaoBao-creator/Simple-Ui/main/ui.lua"))()
 local window = simpleui:CreateWindow({Name= "Simple Hub, BaoBao developer"})
 local farmtab = window:CreateTab("Farm Tab")
-farmtab:CreateDropdown({
-    Name = "Plants To Collect",
-    Options = a(getMyPlantList()),
-    Multi = true,
-    Callback = function(v)
-        if v ~= nil then
-            if isall(v) then
-                CollectList = getMyPlantList()
-            else
-                CollectList = v
-            end
-        else
-            return a(getMyPlantList())
-        end
-    end
-})
+DDWithAll(farmtab, "Plants To Collect", getMyPlantList(), "CollectList")
 farmtab:CreateToggle({
     Name = "Auto Collect Nearby",
     Callback = function(v)
@@ -307,86 +311,15 @@ shoptab:CreateToggle({
         end
     end
 })
-shoptab:CreateDropdown({
-    Name = "Seed To Buy",
-    Options = a(seedshop),
-    Multi = true,
-    Callback = function(v)
-        if v ~= nil then
-            if isall(v) then
-                seedtobuylist = seedshop
-            else
-                seedtobuylist = v
-            end
-        else
-            return a(seedshop)
-        end
-    end
-})
-shoptab:CreateDropdown({
-    Name = "Gear To Buy",
-    Options = a(gearshop),
-    Multi = true,
-    Callback = function(v)
-        if v ~= nil then
-            if isall(v) then
-                geartobuylist = gearshop
-            else
-                geartobuylist = v
-            end
-        else
-            return a(gearshop)
-        end
-    end
-})
-shoptab:CreateDropdown({
-    Name = "Egg To Buy",
-    Options = a(eggshop),
-    Multi = true,
-    Callback = function(v)
-        if v ~= nil then
-            if isall(v) then
-                eggtobuylist = eggshop
-            else
-                eggtobuylist = v
-            end
-        else
-            return a(eggshop)
-        end
-    end
-})
-shoptab:CreateDropdown({
-    Name = "Gnome Shop",
-    Options = a(gnomeshop),
-    Multi = true,
-    Callback = function(v)
-        if v ~= nil then
-            if isall(v) then
-                gnometobuylist = gnomeshop
-            else
-                gnometobuylist = v
-            end
-        else
-            return a(gnomeshop)
-        end
-    end
-})
-shoptab:CreateDropdown({
-    Name = "Sky Shop",
-    Options = a(skyshop),
-    Multi = true,
-    Callback = function(v)
-        if v ~= nil then
-            if isall(v) then
-                skytobuylist = skyshop
-            else
-                skytobuylist = v
-            end
-        else
-            return a(skyshop)
-        end
-    end
-})
+DDWithAll(shoptab, "Seed To Buy", seedshop, "seedtobuylist")
+DDWithAll(shoptab, "Gear To Buy", gearshop, "geartobuylist")
+DDWithAll(shoptab, "Egg To Buy", eggshop, "eggtobuylist")
+DDWithAll(shoptab, "Gnome Shop", gnomeshop, "gnometobuylist")
+DDWithAll(shoptab, "Sky Shop", skyshop, "skytobuylist")
+DDWithAll(shoptab, "Honey Shop", honeyshop, "honeytobuylist")
+DDWithAll(shoptab, "Summer Shop", summershop, "summertobuylist")
+DDWithAll(shoptab, "Spray Shop", sprayshop, "spraytobuylist")
+DDWithAll(shoptab, "Sprinkler Shop", sprinklershop, "sprinklertobuylist")
 local misctab = window:CreateTab("Misc Tab")
 misctab:CreateToggle({
     Name = "Anti Afk",

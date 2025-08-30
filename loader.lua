@@ -362,12 +362,28 @@ shoptab:CreateDropdown({
     Callback = function(v)
         if v ~= nil then
             if isall(v) then
-                tmtobuylist = gnomeshop
+                gnometobuylist = gnomeshop
             else
-                tmtobuylist = v
+                gnometobuylist = v
             end
         else
             return a(gnomeshop)
+        end
+    end
+})
+shoptab:CreateDropdown({
+    Name = "Sky Shop",
+    Options = a(skyshop),
+    Multi = true,
+    Callback = function(v)
+        if v ~= nil then
+            if isall(v) then
+                skytobuylist = skyshop
+            else
+                skytobuylist = v
+            end
+        else
+            return a(skyshop)
         end
     end
 })

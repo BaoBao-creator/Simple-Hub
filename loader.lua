@@ -109,7 +109,6 @@ local function getMyPlantList()
     end
     return names
 end
-local collectui = {"All", table.unpack(getMyPlantList())}
 -- Shop Functions
 local function a(list)
     table.insert(list, 1, "All")
@@ -157,9 +156,6 @@ end
 local seedshop = getitemlist("Seed_Shop")
 local gearshop = getitemlist("Gear_Shop")
 local eggshop = getitemlist("PetShop_UI")
-local seedui = {"All", table.unpack(seedshop)}
-local gearui = {"All", table.unpack(gearshop)}
-local eggui = {"All", table.unpack(eggshop)}
 local function autobuy()
     buying = true
     coroutine.wrap(function()
@@ -271,7 +267,7 @@ local window = simpleui:CreateWindow({Name= "Simple Hub, BaoBao developer"})
 local farmtab = window:CreateTab("Farm Tab")
 farmtab:CreateDropdown({
     Name = "Plants To Collect",
-    Options = collectui,
+    Options = a(getMyPlantList()),
     Multi = true,
     Callback = function(v)
         if v ~= nil then
@@ -281,7 +277,7 @@ farmtab:CreateDropdown({
                 CollectList = v
             end
         else
-            return collectui
+            return a(getMyPlantList())
         end
     end
 })
@@ -296,9 +292,19 @@ farmtab:CreateToggle({
     end
 })
 local shoptab = window:CreateTab("Shop Tab")
+shoptab:CreateToggle({
+    Name = "Auto Buy",
+    Callback = function(v)
+        if v then
+            autobuy()
+        else
+            buying = false
+        end
+    end
+})
 shoptab:CreateDropdown({
     Name = "Seed To Buy",
-    Options = seedui,
+    Options = a(seedshop),
     Multi = true,
     Callback = function(v)
         if v ~= nil then
@@ -308,13 +314,13 @@ shoptab:CreateDropdown({
                 seedtobuylist = v
             end
         else
-            return seedui
+            return a(seedshop)
         end
     end
 })
 shoptab:CreateDropdown({
     Name = "Gear To Buy",
-    Options = gearui,
+    Options = a(gearshop),
     Multi = true,
     Callback = function(v)
         if v ~= nil then
@@ -324,13 +330,13 @@ shoptab:CreateDropdown({
                 geartobuylist = v
             end
         else
-            return gearui
+            return a(gearshop)
         end
     end
 })
 shoptab:CreateDropdown({
     Name = "Egg To Buy",
-    Options = eggui,
+    Options = a(eggshop),
     Multi = true,
     Callback = function(v)
         if v ~= nil then
@@ -340,17 +346,23 @@ shoptab:CreateDropdown({
                 eggtobuylist = v
             end
         else
-            return eggui
+            return a(eggshop)
         end
     end
 })
-shoptab:CreateToggle({
-    Name = "Auto Buy",
+shoptab:CreateDropdown({
+    Name = "Gnome Shop",
+    Options = a(gnomeshop),
+    Multi = true,
     Callback = function(v)
-        if v then
-            autobuy()
+        if v ~= nil then
+            if isall(v) then
+                tmtobuylist = gnomeshop
+            else
+                tmtobuylist = v
+            end
         else
-            buying = false
+            return a(gnomeshop)
         end
     end
 })

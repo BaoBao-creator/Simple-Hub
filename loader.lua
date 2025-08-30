@@ -41,25 +41,6 @@ for _, farm in ipairs(mainfarm:GetChildren()) do
         break
     end
 end
--- Shared functions 
-local function DDWithAll(tab, name, selectionlist, listRef)
-    tab:CreateDropdown({
-        Name = name,
-        Options = a(selectionlist),
-        Multi = true,
-        Callback = function(v)
-            if v ~= nil then
-                if isall(v) then
-                    _G[listRef] = selectionlist
-                else
-                    _G[listRef] = v
-                end
-            else
-                return a(selectionlist)
-            end
-        end
-    })
-end
 -- Farm functions
 local function isCollectable(plantName)
     for _, name in ipairs(CollectList) do
@@ -134,10 +115,6 @@ local function getMyPlantList()
     return names
 end
 -- Shop Functions
-local function a(list)
-    table.insert(list, 1, "All")
-    return list
-end
 local function getstock(shopName, itemName)
     local shop = LocalPlayer.PlayerGui[shopName].Frame.ScrollingFrame
     local item = shop:FindFirstChild(itemName)
@@ -158,14 +135,6 @@ local function buy(type, name)
     elseif type == "tm" then
         ReplicatedStorage.GameEvents.BuyTravelingMerchantShopStock:FireServer(name)
     end
-end
-local function isall(list)
-    for _, i in ipairs(list) do
-        if i == "All" then
-            return true
-        end
-    end
-    return false
 end
 local function getitemlist(shopname)
     local names = {}
@@ -284,6 +253,37 @@ local function clearlag()
     lighting.GlobalShadows = false
     lighting.Ambient = Color3.new(1,1,1)
     lighting.OutdoorAmbient = Color3.new(1,1,1)
+end
+-- Shared functions 
+local function a(list)
+    table.insert(list, 1, "All")
+    return list
+end
+local function isall(list)
+    for _, i in ipairs(list) do
+        if i == "All" then
+            return true
+        end
+    end
+    return false
+end
+local function DDWithAll(tab, name, selectionlist, listRef)
+    tab:CreateDropdown({
+        Name = name,
+        Options = a(selectionlist),
+        Multi = true,
+        Callback = function(v)
+            if v ~= nil then
+                if isall(v) then
+                    _G[listRef] = selectionlist
+                else
+                    _G[listRef] = v
+                end
+            else
+                return a(selectionlist)
+            end
+        end
+    })
 end
 -- UI
 local simpleui = loadstring(game:HttpGet("https://raw.githubusercontent.com/BaoBao-creator/Simple-Ui/main/ui.lua"))()

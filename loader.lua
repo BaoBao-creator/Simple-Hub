@@ -111,12 +111,16 @@ local function getMyPlantList()
 end
 local collectui = {"All", table.unpack(getMyPlantList())}
 -- Shop Functions
+local function a(list)
+    table.insert(list, 1, "All")
+    return list
+end
 local function getstock(shopName, itemName)
     local shop = LocalPlayer.PlayerGui[shopName].Frame.ScrollingFrame
     local item = shop:FindFirstChild(itemName)
     if item then
         local stockText = item.Main_Frame.Stock_Text.Text
-        local number = string:match(stockText, "%d+")
+        local number = string.match(stockText, "%d+")
         return tonumber(number) or 0
     end
     return 0

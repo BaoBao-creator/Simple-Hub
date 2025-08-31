@@ -12,6 +12,7 @@ local humanoid = character.Humanoid
 local humanoidRootPart = character.HumanoidRootPart
 -- Game List
 local collectlist = {}
+local collectDict = {}
 local seedtobuylist = {}
 local geartobuylist = {}
 local eggtobuylist = {}
@@ -89,13 +90,14 @@ local function autoCollectFairy(v)
     end
 end
 -- Farm functions
-local function isCollectable(plantName)
+local function updateCollectDict()
+    collectDict = {}
     for _, name in ipairs(collectlist) do
-        if plantName == name then
-            return true
-        end
+        collectDict[name] = true
     end
-    return false
+end
+local function isCollectable(plantName)
+    return collectDict[plantName] == true
 end
 local function tryProximityPrompts(fruit)
     local ok = false
@@ -433,6 +435,7 @@ local CollectDropdown = FarmTab:CreateDropdown({
     Flag = "CollectDropdown", 
     Callback = function(v)
         collectlist = isall(v, getmyplantlist())
+        updateCollectDict()
     end
 })
 local RefreshCollectDropdownButton = FarmTab:CreateButton({

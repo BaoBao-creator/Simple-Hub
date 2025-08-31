@@ -29,6 +29,7 @@ local summertobuylist = {}
 local spraytobuylist = {}
 local sprinklertobuylist = {}
 local pettoselllist = {}
+local pettosellDict = {}
 -- Game Toggle
 local collecting = false
 local buying = false
@@ -137,7 +138,7 @@ local function autocollect(v)
                     if fruitsFolder then
                         for _, fruit in ipairs(fruitsFolder:GetChildren()) do
                             if not collecting then break end
-                            if fruit:GetAttribute("Favorited") == true then
+                            if fruit:GetAttribute("Favorited") then
                                 goto next
                             end
                             collectFruit(fruit)
@@ -145,7 +146,7 @@ local function autocollect(v)
                             ::next::
                         end
                     else
-                        if plant:GetAttribute("Favorited") == true then
+                        if plant:GetAttribute("Favorited") then
                             goto next
                         end
                         collectFruit(plant)
@@ -242,61 +243,40 @@ local function autobuy(v)
     end)
 end
 -- Sell functions 
-local function find(wl, bl, mode)
-    local results = {}
+local function findpettosell()
+    local pets = {}
     for _, item in ipairs(LocalPlayer.Backpack:GetChildren()) do
-        local name = item.Name
-        local pass = true
-        for _, ww in ipairs(wl) do
-            if not name:find(ww) then
-                pass = false
-                break
-            end
-        end
-        if pass then
-            for _, bw in ipairs(bl) do
-                if name:find(bw) then
-                    pass = false
-                    break
-                end
-            end
-        end
-        if pass then
-            if not mode then
-                return item
-            else
-                table.insert(results, item)
-            end
+        petname = item.Name:gsub("%s%[.-%]", "")
+        if pettosellDict[name] == true then
+            table.insert(pets, item)
         end
     end
-    return results
+    return pets
+end
+local function updatepettosellDict()
+    pettosellDict = {}
+    for _, name in ipairs(pettoselllist) do
+        pettosellDict[name] = true
+    end
 end
 local function autosellpet(v)
     petselling = v
     if petselling then
-        for _, name in ipairs(pettoselllist) do
-            local pets = find({name, "Age"}, {}, true)
-            for _, pet in ipairs(pets) do
-                if pet:GetAttribute("d") == true then
-                    goto next
-                end
-                ReplicatedStorage.GameEvents.SellPet_RE:FireServer(pet)
-                task.wait(0.2)
-                ::next::
-            end
-        end
-        petConnection = LocalPlayer.Backpack.ChildAdded:Connect(function(pet)
-            if not petselling then return end
+        local pets = findpettosell()
+        for _, pet in ipairs(pets) do
             if pet:GetAttribute("d") == true then
                 goto next
             end
-            for _, name in ipairs(pettoselllist) do
-                if pet.Name:find(name) and pet.Name:find("Age") then
-                    task.wait(0.1)
-                    ReplicatedStorage.GameEvents.SellPet_RE:FireServer(pet)
-                end
-            end
+            ReplicatedStorage.GameEvents.SellPet_RE:FireServer(pet)
+            task.wait(0.2)
             ::next::
+        end
+        petConnection = LocalPlayer.Backpack.ChildAdded:Connect(function(pet)
+            if not petselling then return end
+            if pet:GetAttribute("d") then return end
+            if not pettosellDict[pet.Name:gsub("%s%[.-%]", "")] == true then return end
+            task.wait(0.1)
+            ReplicatedStorage.GameEvents.SellPet_RE:FireServer(pet)
         end)
     else
         if petConnection then
@@ -557,6 +537,7 @@ local PetDropdown = SellTab:CreateDropdown({
     Flag = "PetDropdown", 
     Callback = function(v)
         pettoselllist = isall(v, getmypetlist())
+        updatepettosellDict()
     end
 })
 local RefreshPetDropdownButton = SellTab:CreateButton({

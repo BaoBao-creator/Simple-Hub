@@ -239,8 +239,9 @@ local function autosellpet(v)
     coroutine.wrap(function()
         while petselling do
             for _, i in ipairs(pettoselllist) do
-                local pets = find({i, "Age", 
-            local pets =
+                local pets = find({i, "Age"}, {})
+                for _, pet in ipairs(pets) do
+                    local 
             game:GetService("ReplicatedStorage").GameEvents.SellPet_RE:FireServer(.Elk [1.11 KG] [Age 1] --[[ PARENTED TO NIL OR DESTROYED ]])
         end
     end)()

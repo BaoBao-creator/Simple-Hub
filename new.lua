@@ -26,11 +26,13 @@ local honeytobuylist = {}
 local summertobuylist = {}
 local spraytobuylist = {}
 local sprinklertobuylist = {}
+local pettoselllist = {}
 -- Game Toggle
 local collecting = false
 local antiafking = false
 local nocliping = false
 local buying = false
+local petselling = false
 -- Game Data
 local mainfarm = workspace.Farm
 local userfarm
@@ -199,6 +201,17 @@ local function autobuy(v)
         end
     end)()
 end
+-- Sell functions 
+local function autosellpet(v)
+    petselling = v
+    coroutine.wrap(function()
+        while petselling do
+            game:GetService("ReplicatedStorage").GameEvents.SellPet_RE:FireServer(.Elk [1.11 KG] [Age 1] --[[ PARENTED TO NIL OR DESTROYED ]])
+        end
+    end)()
+end
+--game:GetService("ReplicatedStorage").GameEvents.FairyService.CollectLooseFairy:FireServer("cbe64b34-1f94-4a3c-8dfd-5c81547b3dd5")
+--game:GetService("ReplicatedStorage").GameEvents.FairyService.CollectLooseFairy:FireServer("50e7dff8-f458-498b-813b-d74bcbe620c4")
 -- Misc Functions
 LocalPlayer.Idled:Connect(function()
     if antiafking then
@@ -291,7 +304,7 @@ local Window = Rayfield:CreateWindow({
     Name = "Simple Hub",
     LoadingTitle = "Welcome!",
     LoadingSubtitle = "by BaoBao",
-    ShowText = "Show UI",
+    ShowText = "UI",
     Theme = "Bloom",
     ConfigurationSaving = {
         Enabled = true,
@@ -422,6 +435,8 @@ local SprinklerDropdown = ShopTab:CreateDropdown({
         sprinklertobuylist = isall(v, sprinklershop)
     end
 })
+local ShopTab = Window:CreateTab("Shop", 0)
+
 local CraftTab = Window:CreateTab("Craft", 0)
 local MiscTab = Window:CreateTab("Misc", 0)
 local AntiAFKToggle = MiscTab:CreateToggle({

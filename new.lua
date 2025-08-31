@@ -135,7 +135,7 @@ local function getstock(shopName, itemName)
 end
 local function buy(type, name)
     if type == "seed" then
-        ReplicatedStorage.GameEvents.BuySeedStock:FireServer(name)
+        ReplicatedStorage.GameEvents.BuySeedStock:FireServer("Tier 1", name)
     elseif type == "gear" then
         ReplicatedStorage.GameEvents.BuyGearStock:FireServer(name)
     elseif type == "egg" then

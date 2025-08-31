@@ -247,3 +247,348 @@ local function autobuy(v)
         end
     end)
 end
+
+-- Các hàm Sell (Bán pet)
+local function findpettosell()
+    local pets = {}
+    for _, item in ipairs(LocalPlayer.Backpack:GetChildren()) do
+        local petname = item.Name:gsub("%s%[.-%]", "")
+        if pettosellDict[petname] then
+            table.insert(pets, item)
+        end
+    end
+    return pets
+end
+
+local function updatepettosellDict()
+    pettosellDict = {}
+    for _, name in ipairs(pettoselllist) do
+        pettosellDict[name] = true
+    end
+end
+
+local function autosellpet(v)
+    petselling = v
+    if petselling then
+        local pets = findpettosell()
+        for _, pet in ipairs(pets) do
+            if not pet:GetAttribute("d") then
+                ReplicatedStorage.GameEvents.SellPet_RE:FireServer(pet)
+                task.wait(0.2)
+            end
+            if not petselling then break end
+        end
+        petConnection = LocalPlayer.Backpack.ChildAdded:Connect(function(pet)
+            if not petselling then return end
+            if pet:GetAttribute("d") then return end
+            local pname = pet.Name:gsub("%s%[.-%]", "")
+            if not pettosellDict[pname] then return end
+            task.wait(0.1)
+            ReplicatedStorage.GameEvents.SellPet_RE:FireServer(pet)
+        end)
+    else
+        if petConnection then
+            petConnection:Disconnect()
+            petConnection = nil
+        end
+    end
+end
+
+local function getmypetlist()
+    local pets = {}
+    local seen = {}
+    for _, item in ipairs(LocalPlayer.Backpack:GetChildren()) do
+        local nm = item.Name 
+        if nm:find("Age") then
+            nm = nm:gsub("%s%[.-%]", "")
+            if not seen[nm] then
+                seen[nm] = true
+                table.insert(pets, nm)
+            end
+        end
+    end
+    return pets
+end
+
+-- Các hàm Misc (khác)
+local function antiAFK(v)
+    if v then
+        if not antiAFKConnection then
+            antiAFKConnection =
+                LocalPlayer.Idled:Connect(function()
+                    VirtualUser:Button2Down(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
+                    task.wait(1)
+                    VirtualUser:Button2Up(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
+                end)
+        end
+    else
+        if antiAFKConnection then
+            antiAFKConnection:Disconnect()
+            antiAFKConnection = nil
+        end
+    end
+end
+
+local function noClip(v)
+    if v then
+        if not noclipConnection then
+            noclipConnection = RunService.Stepped:Connect(function()
+                for _, part in ipairs(character:GetDescendants()) do
+                    if part:IsA("BasePart") then
+                        part.CanCollide = false
+                    end
+                end
+            end)
+        end
+    else
+        if noclipConnection then
+            noclipConnection:Disconnect()
+            noclipConnection = nil
+        end
+    end
+end
+
+local function clearLag(full)
+    local effectClasses = {ParticleEmitter=true, Trail=true, Beam=true, Smoke=true, Fire=true, Sparkles=true}
+    local textureClasses = {Decal=true, Texture=true}
+    local targets = full and workspace:GetDescendants() or mainfarm:GetDescendants()
+    for _, obj in ipairs(targets) do
+        local className = obj.ClassName
+        if effectClasses[className] then
+            obj.Enabled = false
+        elseif obj:IsA("BasePart") then
+            obj.CastShadow = false
+            obj.Material = Enum.Material.SmoothPlastic
+            if not full then
+                obj.Transparency = 1
+                obj.CanCollide = false
+            end
+        elseif textureClasses[className] then
+            obj.Transparency = 1
+        end
+    end
+    if full then
+        local lighting = game:GetService("Lighting")
+        for _, light in ipairs(lighting:GetDescendants()) do
+            if light:IsA("PointLight") or light:IsA("SpotLight") or light:IsA("SurfaceLight") then
+                light.Enabled = false
+            end
+        end
+        local sky = lighting:FindFirstChildOfClass("Sky")
+        if sky then sky:Destroy() end
+        for _, effect in ipairs({"BloomEffect","BlurEffect","SunRaysEffect","ColorCorrectionEffect","DepthOfFieldEffect","Atmosphere"}) do
+            local e = lighting:FindFirstChildOfClass(effect)
+            if e then e:Destroy() end
+        end
+        lighting.GlobalShadows = false
+        lighting.Ambient = Color3.new(1,1,1)
+        lighting.OutdoorAmbient = Color3.new(1,1,1)
+    end
+end
+
+-- Hàm hỗ trợ chung
+local function a(list)
+    table.insert(list, 1, "All")
+    return list
+end
+local function isall(v, list)
+    for _, i in ipairs(v) do
+        if i == "All" then
+            return list
+        end
+    end
+    return v
+end
+
+-- Tạo UI
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+local Window = Rayfield:CreateWindow({
+    Name = "Simple Hub",
+    LoadingTitle = "Welcome!",
+    LoadingSubtitle = "by BaoBao",
+    ShowText = "UI",
+    Theme = "Bloom",
+    ConfigurationSaving = {
+        Enabled = true,
+        FolderName = nil,
+        FileName = "Simple Hub Config"
+    }
+})
+-- Tab Event
+local EventTab = Window:CreateTab("Event", 0)
+local FarmTab = Window:CreateTab("Farm", 0)
+local AutoCollectToggle = FarmTab:CreateToggle({
+    Name = "Auto Collect Plants Selected",
+    Flag = "AutoCollectToggle",
+    Callback = function(v)
+        autocollect(v)
+    end
+})
+local CollectDropdown = FarmTab:CreateDropdown({
+    Name = "Collect List",
+    Options = a(getmyplantlist()),
+    CurrentOption = nil,
+    MultipleOptions = true,
+    Flag = "CollectDropdown", 
+    Callback = function(v)
+        collectlist = isall(v, getmyplantlist())
+        updateCollectDict()
+    end
+})
+local RefreshCollectDropdownButton = FarmTab:CreateButton({
+    Name = "Refresh Plant List",
+    Callback = function()
+        CollectDropdown:Refresh(getmyplantlist())
+    end
+})
+local ShopTab = Window:CreateTab("Shop", 0)
+local AutoBuyToggle = ShopTab:CreateToggle({
+    Name = "Auto Buy Item Selected",
+    Flag = "AutoBuyToggle",
+    Callback = function(v)
+        autobuy(v)
+    end
+})
+local SeedDropdown = ShopTab:CreateDropdown({
+    Name = "Seed Shop",
+    Options = a(seedshop),
+    CurrentOption = nil,
+    MultipleOptions = true,
+    Flag = "SeedDropdown", 
+    Callback = function(v)
+        seedtobuylist = isall(v, seedshop)
+    end
+})
+local GearDropdown = ShopTab:CreateDropdown({
+    Name = "Gear Shop",
+    Options = a(gearshop),
+    CurrentOption = nil,
+    MultipleOptions = true,
+    Flag = "GearDropdown", 
+    Callback = function(v)
+        geartobuylist = isall(v, gearshop)
+    end
+})
+local EggDropdown = ShopTab:CreateDropdown({
+    Name = "Egg Shop",
+    Options = a(eggshop),
+    CurrentOption = nil,
+    MultipleOptions = true,
+    Flag = "EggDropdown", 
+    Callback = function(v)
+        eggtobuylist = isall(v, eggshop)
+    end
+})
+local GnomeDropdown = ShopTab:CreateDropdown({
+    Name = "Gnome Shop",
+    Options = a(gnomeshop),
+    CurrentOption = nil,
+    MultipleOptions = true,
+    Flag = "GnomeDropdown", 
+    Callback = function(v)
+        gnometobuylist = isall(v, gnomeshop)
+    end
+})
+local SkyDropdown = ShopTab:CreateDropdown({
+    Name = "Sky Shop",
+    Options = a(skyshop),
+    CurrentOption = nil,
+    MultipleOptions = true,
+    Flag = "SkyDropdown", 
+    Callback = function(v)
+        skytobuylist = isall(v, skyshop)
+    end
+})
+local HoneyDropdown = ShopTab:CreateDropdown({
+    Name = "Honey Shop",
+    Options = a(honeyshop),
+    CurrentOption = nil,
+    MultipleOptions = true,
+    Flag = "HoneyDropdown", 
+    Callback = function(v)
+        honeytobuylist = isall(v, honeyshop)
+    end
+})
+local SummerDropdown = ShopTab:CreateDropdown({
+    Name = "Summer Shop",
+    Options = a(summershop),
+    CurrentOption = nil,
+    MultipleOptions = true,
+    Flag = "SummerDropdown", 
+    Callback = function(v)
+        summertobuylist = isall(v, summershop)
+    end
+})
+local SprayDropdown = ShopTab:CreateDropdown({
+    Name = "Spray Shop",
+    Options = a(sprayshop),
+    CurrentOption = nil,
+    MultipleOptions = true,
+    Flag = "SprayDropdown", 
+    Callback = function(v)
+        spraytobuylist = isall(v, sprayshop)
+    end
+})
+local SprinklerDropdown = ShopTab:CreateDropdown({
+    Name = "Sprinkler Shop",
+    Options = a(sprinklershop),
+    CurrentOption = nil,
+    MultipleOptions = true,
+    Flag = "SprinklerDropdown", 
+    Callback = function(v)
+        sprinklertobuylist = isall(v, sprinklershop)
+    end
+})
+local SellTab = Window:CreateTab("Sell", 0)
+local AutoSellPetToggle = SellTab:CreateToggle({
+    Name = "Auto Sell Pet Selected",
+    Flag = "AutoSellPetToggle",
+    Callback = function(v)
+        autosellpet(v)
+    end
+})
+local PetDropdown = SellTab:CreateDropdown({
+    Name = "Pet To Sell",
+    Options = a(getmypetlist()),
+    CurrentOption = nil,
+    MultipleOptions = true,
+    Flag = "PetDropdown", 
+    Callback = function(v)
+        pettoselllist = isall(v, getmypetlist())
+        updatepettosellDict()
+    end
+})
+local RefreshPetDropdownButton = SellTab:CreateButton({
+    Name = "Refresh Pet List",
+    Callback = function()
+        PetDropdown:Refresh(getmypetlist())
+    end
+})
+local CraftTab = Window:CreateTab("Craft", 0)
+local MiscTab = Window:CreateTab("Misc", 0)
+local AntiAFKToggle = MiscTab:CreateToggle({
+    Name = "Anti AFK",
+    Flag = "AntiAFKToggle",
+    Callback = function(v)
+        antiAFK(v)
+    end
+})
+local NoClipToggle = MiscTab:CreateToggle({
+    Name = "No Clip",
+    Flag = "NoClipToggle",
+    Callback = function(v)
+        noClip(v)
+    end
+})
+local RemoveEffectButton = MiscTab:CreateButton({
+    Name = "Remove Effects",
+    Callback = function()
+        clearLag(true)
+    end
+})
+local InvisibleFarmButton = MiscTab:CreateButton({
+    Name = "Invisible Farm",
+    Callback = function()
+        clearLag(false)
+    end
+})

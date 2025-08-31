@@ -205,8 +205,9 @@ end
 local function holditem(tool)
     humanoid:EquipTool(tool)
 end
-local function find(wl, bl)
-    for _, item in ipairs(LocalPlayer.Backpack:GetChildren()) do
+local function find(wl, bl, mode)
+    local results = {}
+    for _, item in ipairs(player.Backpack:GetChildren()) do
         local name = item.Name
         local pass = true
         for _, ww in ipairs(wl) do
@@ -224,14 +225,22 @@ local function find(wl, bl)
             end
         end
         if pass then
-            return item
+            if not mode then
+                return item
+            else
+                table.insert(results, item)
+            end
         end
     end
+    return results
 end
 local function autosellpet(v)
     petselling = v
     coroutine.wrap(function()
         while petselling do
+            for _, i in ipairs(pettoselllist) do
+                local pets = find({i, "Age", 
+            local pets =
             game:GetService("ReplicatedStorage").GameEvents.SellPet_RE:FireServer(.Elk [1.11 KG] [Age 1] --[[ PARENTED TO NIL OR DESTROYED ]])
         end
     end)()

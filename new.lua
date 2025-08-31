@@ -137,12 +137,20 @@ local function autocollect(v)
                     if fruitsFolder then
                         for _, fruit in ipairs(fruitsFolder:GetChildren()) do
                             if not collecting then break end
+                            if fruit:GetAttribute("Favorited") == true then
+                                goto next
+                            end
                             collectFruit(fruit)
                             task.wait(0.01)
+                            ::next::
                         end
                     else
+                        if plant:GetAttribute("Favorited") == true then
+                            goto next
+                        end
                         collectFruit(plant)
                         task.wait(0.01)
+                        ::next::
                     end
                 end
             end
@@ -269,18 +277,26 @@ local function autosellpet(v)
         for _, name in ipairs(pettoselllist) do
             local pets = find({name, "Age"}, {}, true)
             for _, pet in ipairs(pets) do
+                if pet:GetAttribute("d") == true then
+                    goto next
+                end
                 ReplicatedStorage.GameEvents.SellPet_RE:FireServer(pet)
                 task.wait(0.2)
+                ::next::
             end
         end
         petConnection = LocalPlayer.Backpack.ChildAdded:Connect(function(pet)
             if not petselling then return end
+            if pet:GetAttribute("d") == true then
+                goto next
+            end
             for _, name in ipairs(pettoselllist) do
                 if pet.Name:find(name) and pet.Name:find("Age") then
                     task.wait(0.1)
                     ReplicatedStorage.GameEvents.SellPet_RE:FireServer(pet)
                 end
             end
+            ::next::
         end)
     else
         if petConnection then

@@ -103,23 +103,19 @@ local function tryProximityPrompts(fruit)
     local ok = false
     for _, d in ipairs(fruit:GetDescendants()) do
         if d:IsA("ProximityPrompt") then
-            local firePP = rawget(getgenv(), "fireproximityprompt") or _G.fireproximityprompt or fireproximityprompt
-            if typeof(firePP) == "function" then
-                pcall(function()
-                    if d.HoldDuration and d.HoldDuration > 0 then
-                        d.HoldDuration = 0
-                    end
+            pcall(function()
+                if d.HoldDuration and d.HoldDuration > 0 then
+                    d.HoldDuration = 0
+                end
+                if typeof(firePP) == "function" then
                     firePP(d, 1)
-                    ok = true
-                end)
-            else
-                pcall(function()
+                else
                     d:InputHoldBegin()
                     task.wait(0.05)
                     d:InputHoldEnd()
-                    ok = true
-                end)
-            end
+                end
+                ok = true
+            end)
         end
     end
     return ok

@@ -450,3 +450,12 @@ local InvisibleFarmButton = MiscTab:CreateButton({
         clearLag()
     end
 })
+local Button = MiscTab:CreateButton({
+    Name = "...",
+    Callback = function()
+        local a = getoffers()
+        for _, i in ipairs(a) do
+            print(i)
+        end
+    end
+})

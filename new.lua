@@ -40,6 +40,24 @@ for _, farm in ipairs(mainfarm:GetChildren()) do
         break
     end
 end
+-- Event functions 
+local function getoffers()
+    local offers = {}
+    local file = workspace.Interaction.UpdateItems.FairyEvent.WishFountain
+    local offer1 = file.Offering_1.Gui.SurfaceGui.TextLabel.Text
+    local offer2 = file.Offering_2.Gui.SurfaceGui.TextLabel.Text
+    local offer3 = file.Offering_3.Gui.SurfaceGui.TextLabel.Text
+    if offer1:find("0") and not offer1:find("Offering") then
+        table.insert(offers, offer1)
+    end
+    if offer2:find("0") and not offer2:find("Offering") then
+        table.insert(offers, offer2)
+    end
+    if offer3:find("0") and not offer3:find("Offering") then
+        table.insert(offers, offer3)
+    end
+    return offers
+end
 -- Farm functions
 local function isCollectable(plantName)
     for _, name in ipairs(collectlist) do

@@ -257,6 +257,7 @@ local function isall(v, list)
     end
     return v
 end
+-- UI
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 local Window = Rayfield:CreateWindow({
     Name = "Simple Hub,
@@ -279,98 +280,106 @@ local CollectDropdown = FarmTab:CreateDropdown({
     MultipleOptions = true,
     Flag = "CollectDropdown", 
     Callback = function(v)
-        ColectList = isall(v)
+        collectlist = isall(v, getmyplantlist())
     end
 })
 local ShopTab = Window:CreateTab("Shop", 0)
 local SeedDropdown = ShopTab:CreateDropdown({
-    Name = "Collect List",
-    Options = a(getmyplantlist()),
+    Name = "Seed Shop",
+    Options = a(seedshop),
     CurrentOption = nil,
     MultipleOptions = true,
-    Flag = "CollectDropdown", 
+    Flag = "SeedDropdown", 
     Callback = function(v)
-        ColectList = isall(v)
+        seedtobuylist = isall(v, seedshop)
     end
 })
-local CollectDropdown = FarmTab:CreateDropdown({
-    Name = "Collect List",
-    Options = a(getmyplantlist()),
+
+local GearDropdown = ShopTab:CreateDropdown({
+    Name = "Gear Shop",
+    Options = a(gearshop),
     CurrentOption = nil,
     MultipleOptions = true,
-    Flag = "CollectDropdown", 
+    Flag = "GearDropdown", 
     Callback = function(v)
-        ColectList = isall(v)
+        geartobuylist = isall(v, gearshop)
     end
 })
-local CollectDropdown = FarmTab:CreateDropdown({
-    Name = "Collect List",
-    Options = a(getmyplantlist()),
+
+local EggDropdown = ShopTab:CreateDropdown({
+    Name = "Egg Shop",
+    Options = a(eggshop),
     CurrentOption = nil,
     MultipleOptions = true,
-    Flag = "CollectDropdown", 
+    Flag = "EggDropdown", 
     Callback = function(v)
-        ColectList = isall(v)
+        eggtobuylist = isall(v, eggshop)
     end
 })
-local CollectDropdown = FarmTab:CreateDropdown({
-    Name = "Collect List",
-    Options = a(getmyplantlist()),
+
+local GnomeDropdown = ShopTab:CreateDropdown({
+    Name = "Gnome Shop",
+    Options = a(gnomeshop),
     CurrentOption = nil,
     MultipleOptions = true,
-    Flag = "CollectDropdown", 
+    Flag = "GnomeDropdown", 
     Callback = function(v)
-        ColectList = isall(v)
+        gnometobuylist = isall(v, gnomeshop)
     end
 })
-local CollectDropdown = FarmTab:CreateDropdown({
-    Name = "Collect List",
-    Options = a(getmyplantlist()),
+
+local SkyDropdown = ShopTab:CreateDropdown({
+    Name = "Sky Shop",
+    Options = a(skyshop),
     CurrentOption = nil,
     MultipleOptions = true,
-    Flag = "CollectDropdown", 
+    Flag = "SkyDropdown", 
     Callback = function(v)
-        ColectList = isall(v)
+        skytobuylist = isall(v, skyshop)
     end
 })
-local CollectDropdown = FarmTab:CreateDropdown({
-    Name = "Collect List",
-    Options = a(getmyplantlist()),
+
+local HoneyDropdown = ShopTab:CreateDropdown({
+    Name = "Honey Shop",
+    Options = a(honeyshop),
     CurrentOption = nil,
     MultipleOptions = true,
-    Flag = "CollectDropdown", 
+    Flag = "HoneyDropdown", 
     Callback = function(v)
-        ColectList = isall(v)
+        honeytobuylist = isall(v, honeyshop)
     end
 })
-local CollectDropdown = FarmTab:CreateDropdown({
-    Name = "Collect List",
-    Options = a(getmyplantlist()),
+
+local SummerDropdown = ShopTab:CreateDropdown({
+    Name = "Summer Shop",
+    Options = a(summershop),
     CurrentOption = nil,
     MultipleOptions = true,
-    Flag = "CollectDropdown", 
+    Flag = "SummerDropdown", 
     Callback = function(v)
-        ColectList = isall(v)
+        summertobuylist = isall(v, summershop)
     end
 })
-local CollectDropdown = FarmTab:CreateDropdown({
-    Name = "Collect List",
-    Options = a(getmyplantlist()),
+
+local SprayDropdown = ShopTab:CreateDropdown({
+    Name = "Spray Shop",
+    Options = a(sprayshop),
     CurrentOption = nil,
     MultipleOptions = true,
-    Flag = "CollectDropdown", 
+    Flag = "SprayDropdown", 
     Callback = function(v)
-        ColectList = isall(v)
+        spraytobuylist = isall(v, sprayshop)
     end
 })
-local CollectDropdown = FarmTab:CreateDropdown({
-    Name = "Collect List",
-    Options = a(getmyplantlist()),
+
+local SprinklerDropdown = ShopTab:CreateDropdown({
+    Name = "Sprinkler Shop",
+    Options = a(sprinklershop),
     CurrentOption = nil,
     MultipleOptions = true,
-    Flag = "CollectDropdown", 
+    Flag = "SprinklerDropdown", 
     Callback = function(v)
-        ColectList = isall(v)
+        sprinklertobuylist = isall(v, sprinklershop)
     end
 })
 local CraftTab = Window:CreateTab("Craft", 0)

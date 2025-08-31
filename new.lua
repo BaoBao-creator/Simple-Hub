@@ -239,7 +239,7 @@ local function autosellpet(v)
     coroutine.wrap(function()
         while petselling do
             for _, name in ipairs(pettoselllist) do
-                local pets = find({name, "Age"}, {})
+                local pets = find({name, "Age"}, {}, true)
                 for _, pet in ipairs(pets) do
                     holditem(pet)
                     ReplicatedStorage.GameEvents.SellPet_RE:FireServer(pet)

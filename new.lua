@@ -247,7 +247,7 @@ local function findpettosell()
     local pets = {}
     for _, item in ipairs(LocalPlayer.Backpack:GetChildren()) do
         petname = item.Name:gsub("%s%[.-%]", "")
-        if pettosellDict[name] == true then
+        if pettosellDict[petname] then
             table.insert(pets, item)
         end
     end
@@ -264,7 +264,7 @@ local function autosellpet(v)
     if petselling then
         local pets = findpettosell()
         for _, pet in ipairs(pets) do
-            if pet:GetAttribute("d") == true then
+            if pet:GetAttribute("d") then
                 goto next
             end
             ReplicatedStorage.GameEvents.SellPet_RE:FireServer(pet)
@@ -274,7 +274,8 @@ local function autosellpet(v)
         petConnection = LocalPlayer.Backpack.ChildAdded:Connect(function(pet)
             if not petselling then return end
             if pet:GetAttribute("d") then return end
-            if not pettosellDict[pet.Name:gsub("%s%[.-%]", "")] == true then return end
+            local pname = pet.Name:gsub("%s%[.-%]", "")
+            if not pettosellDict[pname] then return end
             task.wait(0.1)
             ReplicatedStorage.GameEvents.SellPet_RE:FireServer(pet)
         end)

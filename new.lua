@@ -202,6 +202,32 @@ local function autobuy(v)
     end)()
 end
 -- Sell functions 
+local function holditem(tool)
+    humanoid:EquipTool(tool)
+end
+local function find(wl, bl)
+    for _, item in ipairs(LocalPlayer.Backpack:GetChildren()) do
+        local name = item.Name
+        local pass = true
+        for _, ww in ipairs(wl) do
+            if not name:find(ww) then
+                pass = false
+                break
+            end
+        end
+        if pass then
+            for _, bw in ipairs(bl) do
+                if name:find(bw) then
+                    pass = false
+                    break
+                end
+            end
+        end
+        if pass then
+            return item
+        end
+    end
+end
 local function autosellpet(v)
     petselling = v
     coroutine.wrap(function()

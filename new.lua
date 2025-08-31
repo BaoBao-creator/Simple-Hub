@@ -275,7 +275,7 @@ end
 -- UI
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 local Window = Rayfield:CreateWindow({
-    Name = "Simple Hub,
+    Name = "Simple Hub",
     LoadingTitle = "Welcome!",
     LoadingSubtitle = "by BaoBao",
     ShowText = "Show UI",
@@ -422,7 +422,7 @@ local NoClipToggle = MiscTab:CreateToggle({
     Name = "No Clip",
     Flag = "NoClipToggle",
     Callback = function(v)
-        noliping = v
+        nocliping = v
     end
 })
 local RemoveEffectButton = MiscTab:CreateButton({

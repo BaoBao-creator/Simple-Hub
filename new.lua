@@ -238,13 +238,25 @@ local function autosellpet(v)
     petselling = v
     coroutine.wrap(function()
         while petselling do
-            for _, i in ipairs(pettoselllist) do
-                local pets = find({i, "Age"}, {})
+            for _, name in ipairs(pettoselllist) do
+                local pets = find({name, "Age"}, {})
                 for _, pet in ipairs(pets) do
-                    local 
-            game:GetService("ReplicatedStorage").GameEvents.SellPet_RE:FireServer(.Elk [1.11 KG] [Age 1] --[[ PARENTED TO NIL OR DESTROYED ]])
+                    ReplicatedStorage.GameEvents.SellPet_RE:FireServer(pet)
+                    task.wait(0.1)
+                end
+            end
+            task.wait(60)
         end
     end)()
+end
+local function getmypetlist()
+    local pets = {}
+    for _, item in ipairs(LocalPlayer.Backpack:GetChildren()) do
+        local name = item.Name
+        if name:find("Age") then
+            table.insert(pets, item)
+        end
+    end
 end
 --game:GetService("ReplicatedStorage").GameEvents.FairyService.CollectLooseFairy:FireServer("cbe64b34-1f94-4a3c-8dfd-5c81547b3dd5")
 --game:GetService("ReplicatedStorage").GameEvents.FairyService.CollectLooseFairy:FireServer("50e7dff8-f458-498b-813b-d74bcbe620c4")
@@ -471,8 +483,14 @@ local SprinklerDropdown = ShopTab:CreateDropdown({
         sprinklertobuylist = isall(v, sprinklershop)
     end
 })
-local ShopTab = Window:CreateTab("Shop", 0)
-
+local SellTab = Window:CreateTab("Sell", 0)
+local AutoSellPetToggle = SellTab:CreateToggle({
+    Name = "Auto Sell Pet Selected",
+    Flag = "AutoSellPetToggle",
+    Callback = function(v)
+        autosellpet(v)
+    end
+})
 local CraftTab = Window:CreateTab("Craft", 0)
 local MiscTab = Window:CreateTab("Misc", 0)
 local AntiAFKToggle = MiscTab:CreateToggle({
@@ -499,14 +517,5 @@ local InvisibleFarmButton = MiscTab:CreateButton({
     Name = "Invisible Farm",
     Callback = function()
         clearLag()
-    end
-})
-local Button = MiscTab:CreateButton({
-    Name = "...",
-    Callback = function()
-        local a = getoffers()
-        for _, i in ipairs(a) do
-            print(i)
-        end
     end
 })

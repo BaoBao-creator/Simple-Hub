@@ -11,33 +11,6 @@ local humanoid = character.Humanoid
 local humanoidRootPart = character.HumanoidRootPart
 -- Game List
 local CollectList = {}
-local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
-local Window = Rayfield:CreateWindow({
-   Name = "Simple Hub,
-   LoadingTitle = "Welcome!",
-   LoadingSubtitle = "by BaoBao",
-   ShowText = "Show UI",
-   Theme = "Bloom",
-   ConfigurationSaving = {
-      Enabled = true,
-      FolderName = nil,
-      FileName = "Big Hub"
-   }
-})
-local Tab = Window:CreateTab("Farm", 0)
--- Roblox Services
-local Players = game:GetService("Players")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local VirtualUser = game:GetService("VirtualUser")
-local UserInputService = game:GetService("UserInputService")
-local RunService = game:GetService("RunService")
--- Roblox Data
-local LocalPlayer = Players.LocalPlayer
-local character = LocalPlayer.Character
-local humanoid = character.Humanoid
-local humanoidRootPart = character.HumanoidRootPart
--- Game List
-local CollectList = {}
 local seedtobuylist = {}
 local geartobuylist = {}
 local eggtobuylist = {}
@@ -55,9 +28,8 @@ local spraytobuylist = {}
 local sprinklertobuylist = {}
 -- Game Toggle
 local collecting = false
-local feeding = false
 local antiafking = false
-local noclip = false
+local nocliping = false
 local buying = false
 -- Game Data
 local mainfarm = workspace.Farm
@@ -200,12 +172,6 @@ local function autobuy()
     end)()
 end
 -- Misc Functions
-local function tpui()
-    local gui = LocalPlayer.PlayerGui.Teleport_UI
-    gui.Frame.Pets.Visible = true
-    gui.Frame.Gear.Visible = true
-end
-tpui()
 LocalPlayer.Idled:Connect(function()
     if antiafking then
         VirtualUser:Button2Down(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
@@ -213,11 +179,8 @@ LocalPlayer.Idled:Connect(function()
         VirtualUser:Button2Up(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
     end
 end)
-local function setNoclip(state)
-    noclip = state
-end
 RunService.Stepped:Connect(function()
-    if noclip and humanoidRootPart then
+    if nocliping and humanoidRootPart then
         for _, part in ipairs(character:GetDescendants()) do
             if part:IsA("BasePart") and part.CanCollide then
                 part.CanCollide = false
@@ -294,3 +257,21 @@ local function isall(list)
     end
     return false
 end
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+local Window = Rayfield:CreateWindow({
+   Name = "Simple Hub,
+   LoadingTitle = "Welcome!",
+   LoadingSubtitle = "by BaoBao",
+   ShowText = "Show UI",
+   Theme = "Bloom",
+   ConfigurationSaving = {
+      Enabled = true,
+      FolderName = nil,
+      FileName = "Big Hub"
+   }
+})
+local EventTab = Window:CreateTab("Event", 0)
+local FarmTab = Window:CreateTab("Farm", 0)
+local ShopTab = Window:CreateTab("Shop", 0)
+local CraftTab = Window:CreateTab("Craft", 0)
+local MiscTab = Window:CreateTab("Misc", 0)

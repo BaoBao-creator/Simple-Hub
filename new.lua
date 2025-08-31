@@ -148,8 +148,8 @@ end
 local seedshop = getitemlist("Seed_Shop")
 local gearshop = getitemlist("Gear_Shop")
 local eggshop = getitemlist("PetShop_UI")
-local function autobuy()
-    buying = true
+local function autobuy(v)
+    buying = v
     coroutine.wrap(function()
         while buying do
             for _, s in ipairs(seedtobuylist) do
@@ -290,6 +290,13 @@ local RefreshCollectDropdownButton = FarmTab:CreateButton({
     end
 })
 local ShopTab = Window:CreateTab("Shop", 0)
+local AutoBuyToggle = MiscTab:CreateToggle({
+    Name = "Auto Buy Item Selected",
+    Flag = "AutoBuyToggle",
+    Callback = function(v)
+        autobuy(v)
+    end
+})
 local SeedDropdown = ShopTab:CreateDropdown({
     Name = "Seed Shop",
     Options = a(seedshop),
@@ -382,9 +389,29 @@ local SprinklerDropdown = ShopTab:CreateDropdown({
 })
 local CraftTab = Window:CreateTab("Craft", 0)
 local MiscTab = Window:CreateTab("Misc", 0)
+local AntiAFKToggle = MiscTab:CreateToggle({
+    Name = "Anti AFK",
+    Flag = "AntiAFKToggle",
+    Callback = function(v)
+        antiafking = v
+    end
+})
+local NoClipToggle = MiscTab:CreateToggle({
+    Name = "No Clip",
+    Flag = "NoClipToggle",
+    Callback = function(v)
+        noliping = v
+    end
+})
 local RemoveEffectButton = MiscTab:CreateButton({
     Name = "Remove Effects",
     Callback = function()
         clearlag()
+    end
+})
+local InvisibleFarmButton = MiscTab:CreateButton({
+    Name = "Invisible Farm",
+    Callback = function()
+        clearLag()
     end
 })

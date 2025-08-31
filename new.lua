@@ -242,7 +242,7 @@ local function autosellpet(v)
                 local pets = find({name, "Age"}, {})
                 for _, pet in ipairs(pets) do
                     ReplicatedStorage.GameEvents.SellPet_RE:FireServer(pet)
-                    task.wait(0.1)
+                    task.wait(0.2)
                 end
             end
             task.wait(60)
@@ -505,6 +505,12 @@ local PetDropdown = SellTab:CreateDropdown({
     Flag = "PetDropdown", 
     Callback = function(v)
         pettoselllist = isall(v, getmypetlist())
+    end
+})
+local RefreshPetDropdownButton = SellTab:CreateButton({
+    Name = "Refresh Pet List",
+    Callback = function()
+        PetDropdown:Refresh(getmypetlist())
     end
 })
 local CraftTab = Window:CreateTab("Craft", 0)

@@ -35,6 +35,7 @@ local buying = false
 local petselling = false
 local collectingFairy = false
 -- Game Connection 
+local petConnection
 local fairyConnection
 local antiAFKConnection
 local noclipConnection
@@ -127,7 +128,7 @@ local function collectFruit(fruit)
 end
 local function autocollect(v)
     collecting = v
-    coroutine.wrap(function()
+    task.spawn(function()
         while collecting do
             for _, plant in ipairs(userfarm.Important.Plants_Physical:GetChildren()) do
                 if not collecting then break end
@@ -147,7 +148,7 @@ local function autocollect(v)
             end
             task.wait(1.5)
         end
-    end)()
+    end)
 end
 local function getmyplantlist()
     local names, seen = {}, {}
@@ -205,7 +206,7 @@ local gearshop = getitemlist("Gear_Shop")
 local eggshop = getitemlist("PetShop_UI")
 local function autobuy(v)
     buying = v
-    coroutine.wrap(function()
+    task.spawn(function()
         while buying do
             local tmtobuylist = mergelists(gnometobuylist, skytobuylist, honeytobuylist, summertobuylist, spraytobuylist, sprinklertobuylist)
             for _, s in ipairs(seedtobuylist) do
@@ -230,12 +231,9 @@ local function autobuy(v)
             end
             task.wait(60)
         end
-    end)()
+    end)
 end
 -- Sell functions 
-local function holditem(tool)
-    humanoid:EquipTool(tool)
-end
 local function find(wl, bl, mode)
     local results = {}
     for _, item in ipairs(LocalPlayer.Backpack:GetChildren()) do
@@ -267,19 +265,29 @@ local function find(wl, bl, mode)
 end
 local function autosellpet(v)
     petselling = v
-    coroutine.wrap(function()
-        while petselling do
+    if petselling then
+        for _, name in ipairs(pettoselllist) do
+            local pets = find({name, "Age"}, {}, true)
+            for _, pet in ipairs(pets) do
+                ReplicatedStorage.GameEvents.SellPet_RE:FireServer(pet)
+                task.wait(0.2)
+            end
+        end
+        petConnection = LocalPlayer.Backpack.ChildAdded:Connect(function(pet)
+            if not petselling then return end
             for _, name in ipairs(pettoselllist) do
-                local pets = find({name, "Age"}, {}, true)
-                for _, pet in ipairs(pets) do
-                    holditem(pet)
+                if pet.Name:find(name) and pet.Name:find("Age") then
+                    task.wait(0.1)
                     ReplicatedStorage.GameEvents.SellPet_RE:FireServer(pet)
-                    task.wait(0.2)
                 end
             end
-            task.wait(60)
+        end)
+    else
+        if petConnection then
+            petConnection:Disconnect()
+            petConnection = nil
         end
-    end)()
+    end
 end
 local function getmypetlist()
     local pets = {}
@@ -331,61 +339,40 @@ local function noClip(v)
         end
     end
 end
-local function clearLag()
-    for _, farm in ipairs(mainfarm:GetChildren()) do
-        if farm:IsA("Folder") or farm:IsA("Model") then
-            for _, obj in ipairs(farm:GetDescendants()) do
-                if obj:IsA("BasePart") then
-                    obj.Transparency = 1
-                    obj.CanCollide = false
-                elseif obj:IsA("Decal") or obj:IsA("Texture") then
-                    obj.Transparency = 1
-                elseif obj:IsA("ParticleEmitter") or obj:IsA("Trail") then
-                    obj.Enabled = false
-                end
-            end
-        end
-    end
-end
-local function clearlag()
-    for _, obj in ipairs(workspace:GetDescendants()) do
-        if obj:IsA("ParticleEmitter") 
-        or obj:IsA("Trail") 
-        or obj:IsA("Beam") 
-        or obj:IsA("Smoke") 
-        or obj:IsA("Fire") 
-        or obj:IsA("Sparkles") then
+local function clearLag(full)
+    local targets = full and workspace:GetDescendants() or mainfarm:GetDescendants()
+    for _, obj in ipairs(targets) do
+        if obj:IsA("ParticleEmitter") or obj:IsA("Trail") or obj:IsA("Beam") 
+        or obj:IsA("Smoke") or obj:IsA("Fire") or obj:IsA("Sparkles") then
             obj.Enabled = false
         elseif obj:IsA("BasePart") then
             obj.CastShadow = false
             obj.Material = Enum.Material.SmoothPlastic
+            if not full then
+                obj.Transparency = 1
+                obj.CanCollide = false
+            end
         elseif obj:IsA("Decal") or obj:IsA("Texture") then
             obj.Transparency = 1
         end
     end
-    for _, light in ipairs(game:GetService("Lighting"):GetDescendants()) do
-        if light:IsA("PointLight") 
-        or light:IsA("SpotLight") 
-        or light:IsA("SurfaceLight") then
-            light.Enabled = false
+    if full then
+        local lighting = game:GetService("Lighting")
+        for _, light in ipairs(lighting:GetDescendants()) do
+            if light:IsA("PointLight") or light:IsA("SpotLight") or light:IsA("SurfaceLight") then
+                light.Enabled = false
+            end
         end
+        local sky = lighting:FindFirstChildOfClass("Sky")
+        if sky then sky:Destroy() end
+        for _, className in ipairs({"BloomEffect","BlurEffect","SunRaysEffect","ColorCorrectionEffect","DepthOfFieldEffect","Atmosphere"}) do
+            local e = lighting:FindFirstChildOfClass(className)
+            if e then e:Destroy() end
+        end
+        lighting.GlobalShadows = false
+        lighting.Ambient = Color3.new(1,1,1)
+        lighting.OutdoorAmbient = Color3.new(1,1,1)
     end
-    local lighting = game:GetService("Lighting")
-    local sky = lighting:FindFirstChildOfClass("Sky")
-    if sky then sky:Destroy() end
-    local function removeEffect(className)
-        local e = lighting:FindFirstChildOfClass(className)
-        if e then e:Destroy() end
-    end
-    removeEffect("BloomEffect")
-    removeEffect("BlurEffect")
-    removeEffect("SunRaysEffect")
-    removeEffect("ColorCorrectionEffect")
-    removeEffect("DepthOfFieldEffect")
-    removeEffect("Atmosphere")
-    lighting.GlobalShadows = false
-    lighting.Ambient = Color3.new(1,1,1)
-    lighting.OutdoorAmbient = Color3.new(1,1,1)
 end
 -- Shared functions 
 local function a(list)
@@ -568,25 +555,25 @@ local AntiAFKToggle = MiscTab:CreateToggle({
     Name = "Anti AFK",
     Flag = "AntiAFKToggle",
     Callback = function(v)
-        antiafking = v
+        antiAFK(v)
     end
 })
 local NoClipToggle = MiscTab:CreateToggle({
     Name = "No Clip",
     Flag = "NoClipToggle",
     Callback = function(v)
-        nocliping = v
+        noClip(v)
     end
 })
 local RemoveEffectButton = MiscTab:CreateButton({
     Name = "Remove Effects",
     Callback = function()
-        clearlag()
+        clearLag(true)
     end
 })
 local InvisibleFarmButton = MiscTab:CreateButton({
     Name = "Invisible Farm",
     Callback = function()
-        clearLag()
+        clearLag(false)
     end
 })

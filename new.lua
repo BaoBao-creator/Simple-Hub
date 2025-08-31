@@ -283,6 +283,12 @@ local CollectDropdown = FarmTab:CreateDropdown({
         collectlist = isall(v, getmyplantlist())
     end
 })
+local RefreshCollectDropdownButton = FarmTab:CreateButton({
+    Name = "Refresh Plant List",
+    Callback = function()
+        CollectDropdown:Refresh(getmyplantlist())
+    end
+})
 local ShopTab = Window:CreateTab("Shop", 0)
 local SeedDropdown = ShopTab:CreateDropdown({
     Name = "Seed Shop",
@@ -294,7 +300,6 @@ local SeedDropdown = ShopTab:CreateDropdown({
         seedtobuylist = isall(v, seedshop)
     end
 })
-
 local GearDropdown = ShopTab:CreateDropdown({
     Name = "Gear Shop",
     Options = a(gearshop),
@@ -305,7 +310,6 @@ local GearDropdown = ShopTab:CreateDropdown({
         geartobuylist = isall(v, gearshop)
     end
 })
-
 local EggDropdown = ShopTab:CreateDropdown({
     Name = "Egg Shop",
     Options = a(eggshop),
@@ -316,7 +320,6 @@ local EggDropdown = ShopTab:CreateDropdown({
         eggtobuylist = isall(v, eggshop)
     end
 })
-
 local GnomeDropdown = ShopTab:CreateDropdown({
     Name = "Gnome Shop",
     Options = a(gnomeshop),
@@ -327,7 +330,6 @@ local GnomeDropdown = ShopTab:CreateDropdown({
         gnometobuylist = isall(v, gnomeshop)
     end
 })
-
 local SkyDropdown = ShopTab:CreateDropdown({
     Name = "Sky Shop",
     Options = a(skyshop),
@@ -338,7 +340,6 @@ local SkyDropdown = ShopTab:CreateDropdown({
         skytobuylist = isall(v, skyshop)
     end
 })
-
 local HoneyDropdown = ShopTab:CreateDropdown({
     Name = "Honey Shop",
     Options = a(honeyshop),
@@ -349,7 +350,6 @@ local HoneyDropdown = ShopTab:CreateDropdown({
         honeytobuylist = isall(v, honeyshop)
     end
 })
-
 local SummerDropdown = ShopTab:CreateDropdown({
     Name = "Summer Shop",
     Options = a(summershop),
@@ -360,7 +360,6 @@ local SummerDropdown = ShopTab:CreateDropdown({
         summertobuylist = isall(v, summershop)
     end
 })
-
 local SprayDropdown = ShopTab:CreateDropdown({
     Name = "Spray Shop",
     Options = a(sprayshop),
@@ -371,7 +370,6 @@ local SprayDropdown = ShopTab:CreateDropdown({
         spraytobuylist = isall(v, sprayshop)
     end
 })
-
 local SprinklerDropdown = ShopTab:CreateDropdown({
     Name = "Sprinkler Shop",
     Options = a(sprinklershop),
@@ -384,3 +382,9 @@ local SprinklerDropdown = ShopTab:CreateDropdown({
 })
 local CraftTab = Window:CreateTab("Craft", 0)
 local MiscTab = Window:CreateTab("Misc", 0)
+local RemoveEffectButton = MiscTab:CreateButton({
+    Name = "Remove Effects",
+    Callback = function()
+        clearlag()
+    end
+})

@@ -4,6 +4,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local VirtualUser = game:GetService("VirtualUser")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
+local firePP = rawget(getgenv(), "fireproximityprompt") or _G.fireproximityprompt or fireproximityprompt
 -- Roblox Data
 local LocalPlayer = Players.LocalPlayer
 local character = LocalPlayer.Character
@@ -29,8 +30,6 @@ local sprinklertobuylist = {}
 local pettoselllist = {}
 -- Game Toggle
 local collecting = false
-local antiafking = false
-local nocliping = false
 local buying = false
 local petselling = false
 local collectingFairy = false

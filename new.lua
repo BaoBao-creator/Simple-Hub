@@ -46,8 +46,9 @@ local function getoffers()
     local file = workspace.Interaction.UpdateItems.FairyEvent.WishFountain
     for i = 1, 3 do
         local offer = file["Offering_" .. i].Gui.SurfaceGui.TextLabel.Text
-        if offer:find("0") and not offer:find("Offering") then
-            table.insert(offers, offer)
+        if offer:find("0/1") and offer:find("Glimmering") and not offer:find("Offering") then
+            local name = offer:match("%d+/%d+%s+Glimmering%s+(.+)")
+            table.insert(offers, name)
         end
     end
     return offers

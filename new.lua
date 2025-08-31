@@ -288,7 +288,7 @@ local Window = Rayfield:CreateWindow({
 })
 local EventTab = Window:CreateTab("Event", 0)
 local FarmTab = Window:CreateTab("Farm", 0)
-local AutoCollectToggle = MiscTab:CreateToggle({
+local AutoCollectToggle = FarmTab:CreateToggle({
     Name = "Auto Collect Plants Selected",
     Flag = "AutoCollectToggle",
     Callback = function(v)
@@ -312,7 +312,7 @@ local RefreshCollectDropdownButton = FarmTab:CreateButton({
     end
 })
 local ShopTab = Window:CreateTab("Shop", 0)
-local AutoBuyToggle = MiscTab:CreateToggle({
+local AutoBuyToggle = ShopTab:CreateToggle({
     Name = "Auto Buy Item Selected",
     Flag = "AutoBuyToggle",
     Callback = function(v)

@@ -207,7 +207,7 @@ local function holditem(tool)
 end
 local function find(wl, bl, mode)
     local results = {}
-    for _, item in ipairs(player.Backpack:GetChildren()) do
+    for _, item in ipairs(LocalPlayer.Backpack:GetChildren()) do
         local name = item.Name
         local pass = true
         for _, ww in ipairs(wl) do
@@ -241,6 +241,7 @@ local function autosellpet(v)
             for _, name in ipairs(pettoselllist) do
                 local pets = find({name, "Age"}, {})
                 for _, pet in ipairs(pets) do
+                    holditem(pet)
                     ReplicatedStorage.GameEvents.SellPet_RE:FireServer(pet)
                     task.wait(0.2)
                 end

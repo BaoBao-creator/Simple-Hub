@@ -79,8 +79,8 @@ local function collectFruit(fruit)
     if not (fruit:IsA("Model") or fruit:IsA("BasePart")) then return false end
     return tryProximityPrompts(fruit)
 end
-local function collectall()
-    collecting = true
+local function autocollect(v)
+    collecting = v
     coroutine.wrap(function()
         while collecting do
             for _, plant in ipairs(userfarm.Important.Plants_Physical:GetChildren()) do
@@ -114,6 +114,15 @@ local function getmyplantlist()
     return names
 end
 -- Shop Functions
+local function mergelists(...)
+    local merged = {}
+    for _, list in ipairs({...}) do
+        for _, v in ipairs(list) do
+            table.insert(merged, v)
+        end
+    end
+    return merged
+end
 local function getstock(shopName, itemName)
     local shop = LocalPlayer.PlayerGui[shopName].Frame.ScrollingFrame
     local item = shop:FindFirstChild(itemName)
@@ -152,6 +161,7 @@ local function autobuy(v)
     buying = v
     coroutine.wrap(function()
         while buying do
+            local tmtobuylist = mergelists(gnometobuylist, skytobuylist, honeytobuylist, summertobuylist, spraytobuylist, sprinklertobuylist)
             for _, s in ipairs(seedtobuylist) do
                 for i = 1, getstock("Seed_Shop", s) do
                     buy("seed", s)
@@ -165,6 +175,11 @@ local function autobuy(v)
             for _, e in ipairs(eggtobuylist) do
                 for i = 1, getstock("PetShop_UI", e) do
                     buy("egg", e)
+                end
+            end
+            for _, tm in ipairs(tmtobuylist) do
+                for i = 1, getstock("TravelingMerchantShop_UI", tm) do
+                    buy("tm", tm)
                 end
             end
             task.wait(60)
@@ -273,6 +288,13 @@ local Window = Rayfield:CreateWindow({
 })
 local EventTab = Window:CreateTab("Event", 0)
 local FarmTab = Window:CreateTab("Farm", 0)
+local AutoCollectToggle = MiscTab:CreateToggle({
+    Name = "Auto Collect Plants Selected",
+    Flag = "AutoCollectToggle",
+    Callback = function(v)
+        autocollect(v)
+    end
+})
 local CollectDropdown = FarmTab:CreateDropdown({
     Name = "Collect List",
     Options = a(getmyplantlist()),

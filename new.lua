@@ -5,51 +5,43 @@ local VirtualUser = game:GetService("VirtualUser")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 local firePP = rawget(getgenv(), "fireproximityprompt") or _G.fireproximityprompt or fireproximityprompt
+
 -- Roblox Data
 local LocalPlayer = Players.LocalPlayer
 local character = LocalPlayer.Character
 local humanoid = character.Humanoid
 local humanoidRootPart = character.HumanoidRootPart
--- Game List
-local collectlist = {}
-local collectDict = {}
-local seedtobuylist = {}
-local geartobuylist = {}
-local eggtobuylist = {}
+
+-- Danh sách item/shop
+local collectlist, collectDict = {}, {}
+local seedtobuylist, geartobuylist, eggtobuylist = {}, {}, {}
 local gnomeshop = {"Common Gnome Crate", "Farmers Gnome Crate", "Classic Gnome Crate", "Iconic Gnome Crate"}
 local skyshop = {"Night Staff", "Star Caller", "Mutation Spray Cloudtouched"}
 local honeyshop = {"Flower Seed Pack", "Honey Sprinkler", "Bee Egg", "Bee Crate", "Honey Crafters Crate"}
 local summershop = {"Cauliflower", "Rafflesia", "Green Apple", "Avocado", "Banana", "Pineapple", "Kiwi", "Bell Pepper", "Prickly Pear", "Loquat", "Feijoa", "Pitcher Plant", "Common Summer Egg", "Rare Summer Egg", "Paradise Egg"}
 local sprayshop = {"Mutation Spray Wet", "Mutation Spray Windstruck", "Mutation Spray Verdant"}
 local sprinklershop = {"Tropical Mist Sprinkler", "Berry Blusher Sprinkler", "Spice Spritzer Sprinkler", "Sweet Soaker Sprinkler", "Flower Froster Sprinkler", "Stalk Sprout Sprinkler"}
-local gnometobuylist = {}
-local skytobuylist = {}
-local honeytobuylist = {}
-local summertobuylist = {}
-local spraytobuylist = {}
-local sprinklertobuylist = {}
-local pettoselllist = {}
-local pettosellDict = {}
+local gnometobuylist, skytobuylist, honeytobuylist = {}, {}, {}
+local summertobuylist, spraytobuylist, sprinklertobuylist = {}, {}, {}
+local pettoselllist, pettosellDict = {}, {}
+
 -- Game Toggle
-local collecting = false
-local buying = false
-local petselling = false
-local collectingFairy = false
--- Game Connection 
-local petConnection
-local fairyConnection
-local antiAFKConnection
-local noclipConnection
--- Game Data
+local collecting, buying, petselling, collectingFairy = false, false, false, false
+
+-- Event connection holders
+local petConnection, fairyConnection, antiAFKConnection, noclipConnection
+
+-- Xác định khu vườn của người chơi
 local mainfarm = workspace.Farm
-local userfarm
+local userfarm = nil
 for _, farm in ipairs(mainfarm:GetChildren()) do
     if farm.Important.Data.Owner.Value == LocalPlayer.Name then
         userfarm = farm
         break
     end
 end
--- Event functions 
+
+-- Các hàm sự kiện
 local function getoffers()
     local offers = {}
     local file = workspace.Interaction.UpdateItems.FairyEvent.WishFountain
@@ -62,20 +54,24 @@ local function getoffers()
     end
     return offers
 end
+
 local function collectFairy(fairy)
     local prompt = fairy:FindFirstChildOfClass("ProximityPrompt")
     if prompt then
         fireproximityprompt(prompt)
     end
 end
+
 local function autoCollectFairy(v)
     collectingFairy = v
     if collectingFairy then
+        -- Ban đầu collect tất cả fairy có sẵn
         for _, obj in ipairs(workspace:GetChildren()) do
             if obj:IsA("Model") and tonumber(obj.Name) then
                 collectFairy(obj)
             end
         end
+        -- Cài đặt sự kiện khi xuất hiện Fairy mới
         fairyConnection = workspace.ChildAdded:Connect(function(obj)
             if obj:IsA("Model") and tonumber(obj.Name) then
                 local prompt = obj:WaitForChild("ProximityPrompt", 5)
@@ -91,16 +87,19 @@ local function autoCollectFairy(v)
         end
     end
 end
--- Farm functions
+
+-- Các hàm Farm
 local function updateCollectDict()
     collectDict = {}
     for _, name in ipairs(collectlist) do
         collectDict[name] = true
     end
 end
+
 local function isCollectable(plantName)
     return collectDict[plantName] == true
 end
+
 local function tryProximityPrompts(fruit)
     local ok = false
     for _, d in ipairs(fruit:GetDescendants()) do
@@ -122,36 +121,37 @@ local function tryProximityPrompts(fruit)
     end
     return ok
 end
+
 local function collectFruit(fruit)
     if not fruit or not fruit.Parent then return false end
     if not (fruit:IsA("Model") or fruit:IsA("BasePart")) then return false end
     return tryProximityPrompts(fruit)
 end
+
+-- Tự động thu hoạch cây/trái
 local function autocollect(v)
     collecting = v
     task.spawn(function()
         while collecting do
-            for _, plant in ipairs(userfarm.Important.Plants_Physical:GetChildren()) do
+            local plants = userfarm.Important.Plants_Physical:GetChildren()
+            for _, plant in ipairs(plants) do
                 if not collecting then break end
                 if isCollectable(plant.Name) then
                     local fruitsFolder = plant:FindFirstChild("Fruits")
                     if fruitsFolder then
-                        for _, fruit in ipairs(fruitsFolder:GetChildren()) do
+                        local fruits = fruitsFolder:GetChildren()
+                        for _, fruit in ipairs(fruits) do
                             if not collecting then break end
-                            if fruit:GetAttribute("Favorited") then
-                                goto next
+                            if not fruit:GetAttribute("Favorited") then
+                                collectFruit(fruit)
+                                task.wait(0.01)
                             end
-                            collectFruit(fruit)
-                            task.wait(0.01)
-                            ::next::
                         end
                     else
-                        if plant:GetAttribute("Favorited") then
-                            goto next
+                        if not plant:GetAttribute("Favorited") then
+                            collectFruit(plant)
+                            task.wait(0.01)
                         end
-                        collectFruit(plant)
-                        task.wait(0.01)
-                        ::next::
                     end
                 end
             end
@@ -159,6 +159,7 @@ local function autocollect(v)
         end
     end)
 end
+
 local function getmyplantlist()
     local names, seen = {}, {}
     for _, plant in ipairs(userfarm.Important.Plants_Physical:GetChildren()) do
@@ -169,16 +170,16 @@ local function getmyplantlist()
     end
     return names
 end
--- Shop Functions
+
+-- Các hàm Shop (Mua đồ)
 local function mergelists(...)
     local merged = {}
     for _, list in ipairs({...}) do
-        for _, v in ipairs(list) do
-            table.insert(merged, v)
-        end
+        table.move(list, 1, #list, #merged+1, merged)
     end
     return merged
 end
+
 local function getstock(shopName, itemName)
     local shop = LocalPlayer.PlayerGui[shopName].Frame.ScrollingFrame
     local item = shop:FindFirstChild(itemName)
@@ -189,6 +190,7 @@ local function getstock(shopName, itemName)
     end
     return 0
 end
+
 local function buy(type, name)
     if type == "seed" then
         ReplicatedStorage.GameEvents.BuySeedStock:FireServer("Tier 1", name)
@@ -200,19 +202,22 @@ local function buy(type, name)
         ReplicatedStorage.GameEvents.BuyTravelingMerchantShopStock:FireServer(name)
     end
 end
+
 local function getitemlist(shopname)
     local names = {}
     for _, item in ipairs(LocalPlayer.PlayerGui[shopname].Frame.ScrollingFrame:GetChildren()) do
-        local name = item.Name
-        if not name:find("Padding") and not name:find("Item_Size") and not name:find("UIListLayout") then
-            table.insert(names, name)
+        local nm = item.Name
+        if not nm:find("Padding") and not nm:find("Item_Size") and not nm:find("UIListLayout") then
+            table.insert(names, nm)
         end
     end
     return names
 end
+
 local seedshop = getitemlist("Seed_Shop")
 local gearshop = getitemlist("Gear_Shop")
 local eggshop = getitemlist("PetShop_UI")
+
 local function autobuy(v)
     buying = v
     task.spawn(function()
@@ -242,336 +247,3 @@ local function autobuy(v)
         end
     end)
 end
--- Sell functions 
-local function findpettosell()
-    local pets = {}
-    for _, item in ipairs(LocalPlayer.Backpack:GetChildren()) do
-        petname = item.Name:gsub("%s%[.-%]", "")
-        if pettosellDict[petname] then
-            table.insert(pets, item)
-        end
-    end
-    return pets
-end
-local function updatepettosellDict()
-    pettosellDict = {}
-    for _, name in ipairs(pettoselllist) do
-        pettosellDict[name] = true
-    end
-end
-local function autosellpet(v)
-    petselling = v
-    if petselling then
-        local pets = findpettosell()
-        for _, pet in ipairs(pets) do
-            if pet:GetAttribute("d") then
-                goto next
-            end
-            ReplicatedStorage.GameEvents.SellPet_RE:FireServer(pet)
-            task.wait(0.2)
-            ::next::
-        end
-        petConnection = LocalPlayer.Backpack.ChildAdded:Connect(function(pet)
-            if not petselling then return end
-            if pet:GetAttribute("d") then return end
-            local pname = pet.Name:gsub("%s%[.-%]", "")
-            if not pettosellDict[pname] then return end
-            task.wait(0.1)
-            ReplicatedStorage.GameEvents.SellPet_RE:FireServer(pet)
-        end)
-    else
-        if petConnection then
-            petConnection:Disconnect()
-            petConnection = nil
-        end
-    end
-end
-local function getmypetlist()
-    local pets = {}
-    local seen = {}
-    for _, item in ipairs(LocalPlayer.Backpack:GetChildren()) do
-        local name = item.Name 
-        if name:find("Age") then
-            name = name:gsub("%s%[.-%]", "")
-            if not seen[name] then
-                seen[name] = true
-                table.insert(pets, name)
-            end
-        end
-    end
-    return pets
-end
--- Misc Functions
-local function antiAFK(v)
-    if v then
-        if not antiAFKConnection then
-            antiAFKConnection = game:GetService("Players").LocalPlayer.Idled:Connect(function()
-                VirtualUser:Button2Down(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
-                task.wait(1)
-                VirtualUser:Button2Up(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
-            end)
-        end
-    else
-        if antiAFKConnection then
-            antiAFKConnection:Disconnect()
-            antiAFKConnection = nil
-        end
-    end
-end
-local function noClip(v)
-    if v then
-        if not noclipConnection then
-            noclipConnection = RunService.Stepped:Connect(function()
-                for _, part in ipairs(character:GetDescendants()) do
-                    if part:IsA("BasePart") then
-                        part.CanCollide = false
-                    end
-                end
-            end)
-        end
-    else
-        if noclipConnection then
-            noclipConnection:Disconnect()
-            noclipConnection = nil
-        end
-    end
-end
-local function clearLag(full)
-    local targets = full and workspace:GetDescendants() or mainfarm:GetDescendants()
-    for _, obj in ipairs(targets) do
-        if obj:IsA("ParticleEmitter") or obj:IsA("Trail") or obj:IsA("Beam") 
-        or obj:IsA("Smoke") or obj:IsA("Fire") or obj:IsA("Sparkles") then
-            obj.Enabled = false
-        elseif obj:IsA("BasePart") then
-            obj.CastShadow = false
-            obj.Material = Enum.Material.SmoothPlastic
-            if not full then
-                obj.Transparency = 1
-                obj.CanCollide = false
-            end
-        elseif obj:IsA("Decal") or obj:IsA("Texture") then
-            obj.Transparency = 1
-        end
-    end
-    if full then
-        local lighting = game:GetService("Lighting")
-        for _, light in ipairs(lighting:GetDescendants()) do
-            if light:IsA("PointLight") or light:IsA("SpotLight") or light:IsA("SurfaceLight") then
-                light.Enabled = false
-            end
-        end
-        local sky = lighting:FindFirstChildOfClass("Sky")
-        if sky then sky:Destroy() end
-        for _, className in ipairs({"BloomEffect","BlurEffect","SunRaysEffect","ColorCorrectionEffect","DepthOfFieldEffect","Atmosphere"}) do
-            local e = lighting:FindFirstChildOfClass(className)
-            if e then e:Destroy() end
-        end
-        lighting.GlobalShadows = false
-        lighting.Ambient = Color3.new(1,1,1)
-        lighting.OutdoorAmbient = Color3.new(1,1,1)
-    end
-end
--- Shared functions 
-local function a(list)
-    table.insert(list, 1, "All")
-    return list
-end
-local function isall(v, list)
-    for _, i in ipairs(v) do
-        if i == "All" then
-            return list
-        end
-    end
-    return v
-end
--- UI
-local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
-local Window = Rayfield:CreateWindow({
-    Name = "Simple Hub",
-    LoadingTitle = "Welcome!",
-    LoadingSubtitle = "by BaoBao",
-    ShowText = "UI",
-    Theme = "Bloom",
-    ConfigurationSaving = {
-        Enabled = true,
-        FolderName = nil,
-        FileName = "Simple Hub Config"
-    }
-})
-local EventTab = Window:CreateTab("Event", 0)
-local FarmTab = Window:CreateTab("Farm", 0)
-local AutoCollectToggle = FarmTab:CreateToggle({
-    Name = "Auto Collect Plants Selected",
-    Flag = "AutoCollectToggle",
-    Callback = function(v)
-        autocollect(v)
-    end
-})
-local CollectDropdown = FarmTab:CreateDropdown({
-    Name = "Collect List",
-    Options = a(getmyplantlist()),
-    CurrentOption = nil,
-    MultipleOptions = true,
-    Flag = "CollectDropdown", 
-    Callback = function(v)
-        collectlist = isall(v, getmyplantlist())
-        updateCollectDict()
-    end
-})
-local RefreshCollectDropdownButton = FarmTab:CreateButton({
-    Name = "Refresh Plant List",
-    Callback = function()
-        CollectDropdown:Refresh(getmyplantlist())
-    end
-})
-local ShopTab = Window:CreateTab("Shop", 0)
-local AutoBuyToggle = ShopTab:CreateToggle({
-    Name = "Auto Buy Item Selected",
-    Flag = "AutoBuyToggle",
-    Callback = function(v)
-        autobuy(v)
-    end
-})
-local SeedDropdown = ShopTab:CreateDropdown({
-    Name = "Seed Shop",
-    Options = a(seedshop),
-    CurrentOption = nil,
-    MultipleOptions = true,
-    Flag = "SeedDropdown", 
-    Callback = function(v)
-        seedtobuylist = isall(v, seedshop)
-    end
-})
-local GearDropdown = ShopTab:CreateDropdown({
-    Name = "Gear Shop",
-    Options = a(gearshop),
-    CurrentOption = nil,
-    MultipleOptions = true,
-    Flag = "GearDropdown", 
-    Callback = function(v)
-        geartobuylist = isall(v, gearshop)
-    end
-})
-local EggDropdown = ShopTab:CreateDropdown({
-    Name = "Egg Shop",
-    Options = a(eggshop),
-    CurrentOption = nil,
-    MultipleOptions = true,
-    Flag = "EggDropdown", 
-    Callback = function(v)
-        eggtobuylist = isall(v, eggshop)
-    end
-})
-local GnomeDropdown = ShopTab:CreateDropdown({
-    Name = "Gnome Shop",
-    Options = a(gnomeshop),
-    CurrentOption = nil,
-    MultipleOptions = true,
-    Flag = "GnomeDropdown", 
-    Callback = function(v)
-        gnometobuylist = isall(v, gnomeshop)
-    end
-})
-local SkyDropdown = ShopTab:CreateDropdown({
-    Name = "Sky Shop",
-    Options = a(skyshop),
-    CurrentOption = nil,
-    MultipleOptions = true,
-    Flag = "SkyDropdown", 
-    Callback = function(v)
-        skytobuylist = isall(v, skyshop)
-    end
-})
-local HoneyDropdown = ShopTab:CreateDropdown({
-    Name = "Honey Shop",
-    Options = a(honeyshop),
-    CurrentOption = nil,
-    MultipleOptions = true,
-    Flag = "HoneyDropdown", 
-    Callback = function(v)
-        honeytobuylist = isall(v, honeyshop)
-    end
-})
-local SummerDropdown = ShopTab:CreateDropdown({
-    Name = "Summer Shop",
-    Options = a(summershop),
-    CurrentOption = nil,
-    MultipleOptions = true,
-    Flag = "SummerDropdown", 
-    Callback = function(v)
-        summertobuylist = isall(v, summershop)
-    end
-})
-local SprayDropdown = ShopTab:CreateDropdown({
-    Name = "Spray Shop",
-    Options = a(sprayshop),
-    CurrentOption = nil,
-    MultipleOptions = true,
-    Flag = "SprayDropdown", 
-    Callback = function(v)
-        spraytobuylist = isall(v, sprayshop)
-    end
-})
-local SprinklerDropdown = ShopTab:CreateDropdown({
-    Name = "Sprinkler Shop",
-    Options = a(sprinklershop),
-    CurrentOption = nil,
-    MultipleOptions = true,
-    Flag = "SprinklerDropdown", 
-    Callback = function(v)
-        sprinklertobuylist = isall(v, sprinklershop)
-    end
-})
-local SellTab = Window:CreateTab("Sell", 0)
-local AutoSellPetToggle = SellTab:CreateToggle({
-    Name = "Auto Sell Pet Selected",
-    Flag = "AutoSellPetToggle",
-    Callback = function(v)
-        autosellpet(v)
-    end
-})
-local PetDropdown = SellTab:CreateDropdown({
-    Name = "Pet To Sell",
-    Options = a(getmypetlist()),
-    CurrentOption = nil,
-    MultipleOptions = true,
-    Flag = "PetDropdown", 
-    Callback = function(v)
-        pettoselllist = isall(v, getmypetlist())
-        updatepettosellDict()
-    end
-})
-local RefreshPetDropdownButton = SellTab:CreateButton({
-    Name = "Refresh Pet List",
-    Callback = function()
-        PetDropdown:Refresh(getmypetlist())
-    end
-})
-local CraftTab = Window:CreateTab("Craft", 0)
-local MiscTab = Window:CreateTab("Misc", 0)
-local AntiAFKToggle = MiscTab:CreateToggle({
-    Name = "Anti AFK",
-    Flag = "AntiAFKToggle",
-    Callback = function(v)
-        antiAFK(v)
-    end
-})
-local NoClipToggle = MiscTab:CreateToggle({
-    Name = "No Clip",
-    Flag = "NoClipToggle",
-    Callback = function(v)
-        noClip(v)
-    end
-})
-local RemoveEffectButton = MiscTab:CreateButton({
-    Name = "Remove Effects",
-    Callback = function()
-        clearLag(true)
-    end
-})
-local InvisibleFarmButton = MiscTab:CreateButton({
-    Name = "Invisible Farm",
-    Callback = function()
-        clearLag(false)
-    end
-})

@@ -33,6 +33,11 @@ local antiafking = false
 local nocliping = false
 local buying = false
 local petselling = false
+local collectingFairy = false
+-- Game Connection 
+local fairyConnection
+local antiAFKConnection
+local noclipConnection
 -- Game Data
 local mainfarm = workspace.Farm
 local userfarm
@@ -54,6 +59,35 @@ local function getoffers()
         end
     end
     return offers
+end
+local function collectFairy(fairy)
+    local prompt = fairy:FindFirstChildOfClass("ProximityPrompt")
+    if prompt then
+        fireproximityprompt(prompt)
+    end
+end
+local function autoCollectFairy(v)
+    collectingFairy = v
+    if collectingFairy then
+        for _, obj in ipairs(workspace:GetChildren()) do
+            if obj:IsA("Model") and tonumber(obj.Name) then
+                collectFairy(obj)
+            end
+        end
+        fairyConnection = workspace.ChildAdded:Connect(function(obj)
+            if obj:IsA("Model") and tonumber(obj.Name) then
+                local prompt = obj:WaitForChild("ProximityPrompt", 5)
+                if prompt and collectingFairy then
+                    fireproximityprompt(prompt)
+                end
+            end
+        end)
+    else
+        if fairyConnection then
+            fairyConnection:Disconnect()
+            fairyConnection = nil
+        end
+    end
 end
 -- Farm functions
 local function isCollectable(plantName)
@@ -265,25 +299,41 @@ local function getmypetlist()
     end
     return pets
 end
---game:GetService("ReplicatedStorage").GameEvents.FairyService.CollectLooseFairy:FireServer("cbe64b34-1f94-4a3c-8dfd-5c81547b3dd5")
---game:GetService("ReplicatedStorage").GameEvents.FairyService.CollectLooseFairy:FireServer("50e7dff8-f458-498b-813b-d74bcbe620c4")
 -- Misc Functions
-LocalPlayer.Idled:Connect(function()
-    if antiafking then
-        VirtualUser:Button2Down(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
-        task.wait(1)
-        VirtualUser:Button2Up(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
-    end
-end)
-RunService.Stepped:Connect(function()
-    if nocliping and humanoidRootPart then
-        for _, part in ipairs(character:GetDescendants()) do
-            if part:IsA("BasePart") and part.CanCollide then
-                part.CanCollide = false
-            end
+local function antiAFK(v)
+    if v then
+        if not antiAFKConnection then
+            antiAFKConnection = game:GetService("Players").LocalPlayer.Idled:Connect(function()
+                VirtualUser:Button2Down(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
+                task.wait(1)
+                VirtualUser:Button2Up(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
+            end)
+        end
+    else
+        if antiAFKConnection then
+            antiAFKConnection:Disconnect()
+            antiAFKConnection = nil
         end
     end
-end)
+end
+local function noClip(v)
+    if v then
+        if not noclipConnection then
+            noclipConnection = RunService.Stepped:Connect(function()
+                for _, part in ipairs(character:GetDescendants()) do
+                    if part:IsA("BasePart") then
+                        part.CanCollide = false
+                    end
+                end
+            end)
+        end
+    else
+        if noclipConnection then
+            noclipConnection:Disconnect()
+            noclipConnection = nil
+        end
+    end
+end
 local function clearLag()
     for _, farm in ipairs(mainfarm:GetChildren()) do
         if farm:IsA("Folder") or farm:IsA("Model") then

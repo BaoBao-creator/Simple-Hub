@@ -251,12 +251,18 @@ local function autosellpet(v)
 end
 local function getmypetlist()
     local pets = {}
+    local seen = {}
     for _, item in ipairs(LocalPlayer.Backpack:GetChildren()) do
-        local name = item.Name
+        local name = item.Name 
         if name:find("Age") then
-            table.insert(pets, item)
+            name = name:gsub("%s%[.-%]", "")
+            if not seen[name] then
+                seen[name] = true
+                table.insert(pets, name)
+            end
         end
     end
+    return pets
 end
 --game:GetService("ReplicatedStorage").GameEvents.FairyService.CollectLooseFairy:FireServer("cbe64b34-1f94-4a3c-8dfd-5c81547b3dd5")
 --game:GetService("ReplicatedStorage").GameEvents.FairyService.CollectLooseFairy:FireServer("50e7dff8-f458-498b-813b-d74bcbe620c4")
@@ -489,6 +495,16 @@ local AutoSellPetToggle = SellTab:CreateToggle({
     Flag = "AutoSellPetToggle",
     Callback = function(v)
         autosellpet(v)
+    end
+})
+local PetDropdown = SellTab:CreateDropdown({
+    Name = "Pet To Sell",
+    Options = a(getmypetlist()),
+    CurrentOption = nil,
+    MultipleOptions = true,
+    Flag = "PetDropdown", 
+    Callback = function(v)
+        pettoselllist = isall(v, getmypetlist())
     end
 })
 local CraftTab = Window:CreateTab("Craft", 0)

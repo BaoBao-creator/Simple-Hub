@@ -420,6 +420,13 @@ local OnlyMutationToggle = FarmTab:CreateToggle({
         onlymutation = v
     end
 })
+local MutationToCollectInput = Tab:CreateInput({
+    Name = "Mutation To Collect",
+    Flag = "MutationToCollectInput",
+    Callback = function(v)
+        mutationtocollect = v
+    end
+})
 local ShopTab = Window:CreateTab("Shop", 0)
 local AutoBuyToggle = ShopTab:CreateToggle({
     Name = "Auto Buy Item Selected",

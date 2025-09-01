@@ -5,13 +5,11 @@ local VirtualUser = game:GetService("VirtualUser")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 local firePP = rawget(getgenv(), "fireproximityprompt") or _G.fireproximityprompt or fireproximityprompt
-
 -- Roblox Data
 local LocalPlayer = Players.LocalPlayer
 local character = LocalPlayer.Character
 local humanoid = character.Humanoid
 local humanoidRootPart = character.HumanoidRootPart
-
 -- Danh sách item/shop
 local collectlist, collectDict = {}, {}
 local seedtobuylist, geartobuylist, eggtobuylist = {}, {}, {}
@@ -24,13 +22,10 @@ local sprinklershop = {"Tropical Mist Sprinkler", "Berry Blusher Sprinkler", "Sp
 local gnometobuylist, skytobuylist, honeytobuylist = {}, {}, {}
 local summertobuylist, spraytobuylist, sprinklertobuylist = {}, {}, {}
 local pettoselllist, pettosellDict = {}, {}
-
 -- Game Toggle
 local collecting, buying, petselling, collectingFairy = false, false, false, false
-
 -- Event connection holders
 local petConnection, fairyConnection, antiAFKConnection, noclipConnection
-
 -- Xác định khu vườn của người chơi
 local mainfarm = workspace.Farm
 local userfarm = nil
@@ -40,7 +35,6 @@ for _, farm in ipairs(mainfarm:GetChildren()) do
         break
     end
 end
-
 -- Các hàm sự kiện
 local function getoffers()
     local offers = {}
@@ -54,14 +48,12 @@ local function getoffers()
     end
     return offers
 end
-
 local function collectFairy(fairy)
     local prompt = fairy:FindFirstChildOfClass("ProximityPrompt")
     if prompt then
         fireproximityprompt(prompt)
     end
 end
-
 local function autoCollectFairy(v)
     collectingFairy = v
     if collectingFairy then
@@ -85,7 +77,6 @@ local function autoCollectFairy(v)
         end
     end
 end
-
 -- Các hàm Farm
 local function updateCollectDict()
     collectDict = {}
@@ -93,31 +84,23 @@ local function updateCollectDict()
         collectDict[name] = true
     end
 end
-
-local function isCollectable(plantName)
-    return collectDict[plantName] == true
-end
-
 local function tryProximityPrompts(fruit)
-    local ok = false
     for _, d in ipairs(fruit:GetDescendants()) do
         if d:IsA("ProximityPrompt") then
-            pcall(function()
-                if d.HoldDuration and d.HoldDuration > 0 then
-                    d.HoldDuration = 0
-                end
-                if typeof(firePP) == "function" then
-                    firePP(d, 1)
-                else
-                    d:InputHoldBegin()
-                    task.wait(0.05)
-                    d:InputHoldEnd()
-                end
-                ok = true
-            end)
+            if d.HoldDuration and d.HoldDuration > 0 then
+                d.HoldDuration = 0
+            end
+            if typeof(firePP) == "function" then
+                firePP(d, 1)
+            else
+                d:InputHoldBegin()
+                task.wait(0.05)
+                d:InputHoldEnd()
+            end
+            return true
         end
     end
-    return ok
+    return false
 end
 local function collectFruit(fruit)
     if not fruit or not fruit.Parent then return false end
@@ -132,7 +115,7 @@ local function autocollect(v)
             local plants = userfarm.Important.Plants_Physical:GetChildren()
             for _, plant in ipairs(plants) do
                 if not collecting then break end
-                if isCollectable(plant.Name) then
+                if collectDict[plant.Name] then
                     local fruitsFolder = plant:FindFirstChild("Fruits")
                     if fruitsFolder then
                         local fruits = fruitsFolder:GetChildren()

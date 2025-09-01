@@ -37,13 +37,14 @@ for _, farm in ipairs(mainfarm:GetChildren()) do
 end
 -- Các hàm sự kiện
 local function getoffers()
-    local offers = {}
     local fountain = workspace.Interaction.UpdateItems.FairyEvent.WishFountain
+    local offers, n = {}, 0
     for i = 1, 3 do
         local text = fountain["Offering_" .. i].Gui.SurfaceGui.TextLabel.Text
         local name = text:match("%d+/%d+%s+Glimmering%s+(.+)")
         if name then
-            offers[#offers + 1] = name
+            n += 1
+            offers[n] = name
         end
     end
     return offers

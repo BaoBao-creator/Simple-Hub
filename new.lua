@@ -38,12 +38,12 @@ end
 -- Các hàm sự kiện
 local function getoffers()
     local offers = {}
-    local file = workspace.Interaction.UpdateItems.FairyEvent.WishFountain
+    local fountain = workspace.Interaction.UpdateItems.FairyEvent.WishFountain
     for i = 1, 3 do
-        local offer = file["Offering_" .. i].GUI.SurfaceGui.TextLabel.Text
-        if offer:find("0/1") and offer:find("Glimmering") and not offer:find("Offering") then
-            local name = offer:match("%d+/%d+%s+Glimmering%s+(.+)")
-            table.insert(offers, name)
+        local text = fountain["Offering_" .. i].Gui.SurfaceGui.TextLabel.Text
+        local name = text:match("%d+/%d+%s+Glimmering%s+(.+)")
+        if name then
+            offers[#offers + 1] = name
         end
     end
     return offers

@@ -65,13 +65,11 @@ end
 local function autoCollectFairy(v)
     collectingFairy = v
     if collectingFairy then
-        -- Ban đầu collect tất cả fairy có sẵn
         for _, obj in ipairs(workspace:GetChildren()) do
             if obj:IsA("Model") and tonumber(obj.Name) then
                 collectFairy(obj)
             end
         end
-        -- Cài đặt sự kiện khi xuất hiện Fairy mới
         fairyConnection = workspace.ChildAdded:Connect(function(obj)
             if obj:IsA("Model") and tonumber(obj.Name) then
                 local prompt = obj:WaitForChild("ProximityPrompt", 5)
@@ -121,13 +119,11 @@ local function tryProximityPrompts(fruit)
     end
     return ok
 end
-
 local function collectFruit(fruit)
     if not fruit or not fruit.Parent then return false end
     if not (fruit:IsA("Model") or fruit:IsA("BasePart")) then return false end
     return tryProximityPrompts(fruit)
 end
-
 -- Tự động thu hoạch cây/trái
 local function autocollect(v)
     collecting = v
@@ -159,7 +155,6 @@ local function autocollect(v)
         end
     end)
 end
-
 local function getmyplantlist()
     local names, seen = {}, {}
     for _, plant in ipairs(userfarm.Important.Plants_Physical:GetChildren()) do
@@ -170,7 +165,6 @@ local function getmyplantlist()
     end
     return names
 end
-
 -- Các hàm Shop (Mua đồ)
 local function mergelists(...)
     local merged = {}
@@ -179,7 +173,6 @@ local function mergelists(...)
     end
     return merged
 end
-
 local function getstock(shopName, itemName)
     local shop = LocalPlayer.PlayerGui[shopName].Frame.ScrollingFrame
     local item = shop:FindFirstChild(itemName)
@@ -190,7 +183,6 @@ local function getstock(shopName, itemName)
     end
     return 0
 end
-
 local function buy(type, name)
     if type == "seed" then
         ReplicatedStorage.GameEvents.BuySeedStock:FireServer("Tier 1", name)
@@ -202,7 +194,6 @@ local function buy(type, name)
         ReplicatedStorage.GameEvents.BuyTravelingMerchantShopStock:FireServer(name)
     end
 end
-
 local function getitemlist(shopname)
     local names = {}
     for _, item in ipairs(LocalPlayer.PlayerGui[shopname].Frame.ScrollingFrame:GetChildren()) do
@@ -213,11 +204,9 @@ local function getitemlist(shopname)
     end
     return names
 end
-
 local seedshop = getitemlist("Seed_Shop")
 local gearshop = getitemlist("Gear_Shop")
 local eggshop = getitemlist("PetShop_UI")
-
 local function autobuy(v)
     buying = v
     task.spawn(function()
@@ -247,7 +236,6 @@ local function autobuy(v)
         end
     end)
 end
-
 -- Các hàm Sell (Bán pet)
 local function findpettosell()
     local pets = {}
@@ -259,14 +247,12 @@ local function findpettosell()
     end
     return pets
 end
-
 local function updatepettosellDict()
     pettosellDict = {}
     for _, name in ipairs(pettoselllist) do
         pettosellDict[name] = true
     end
 end
-
 local function autosellpet(v)
     petselling = v
     if petselling then
@@ -293,7 +279,6 @@ local function autosellpet(v)
         end
     end
 end
-
 local function getmypetlist()
     local pets = {}
     local seen = {}
@@ -309,7 +294,6 @@ local function getmypetlist()
     end
     return pets
 end
-
 -- Các hàm Misc (khác)
 local function antiAFK(v)
     if v then

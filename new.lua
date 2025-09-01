@@ -101,6 +101,9 @@ local function tryProximityPrompts(obj)
         end
     end
 end
+local function isgrownup(object)
+    return object.Grow.Age.Value >= object:GetAttribute("MaxAge")
+end
 local function collectFruit(obj)
     if obj and obj.Parent and not obj:GetAttribute("Favorited") then
         return tryProximityPrompts(obj)
@@ -119,10 +122,14 @@ local function autocollect(v)
                     if fruitsFolder then
                         for _, fruit in ipairs(fruitsFolder:GetChildren()) do
                             if not collecting then break end
-                            collectFruit(fruit)
+                            if isgrownup(fruit) then
+                                collectFruit(fruit)
+                            end
                         end
                     else
-                        collectFruit(plant)
+                        if isgrownup(plant) then
+                            collectFruit(plant)
+                        end
                     end
                 end
             end

@@ -84,57 +84,49 @@ local function updateCollectDict()
         collectDict[name] = true
     end
 end
-local function tryProximityPrompts(fruit)
-    for _, d in ipairs(fruit:GetDescendants()) do
+local function tryProximityPrompts(obj)
+    for _, d in ipairs(obj:GetDescendants()) do
         if d:IsA("ProximityPrompt") then
-            if d.HoldDuration and d.HoldDuration > 0 then
+            if d.HoldDuration > 0 then
                 d.HoldDuration = 0
             end
-            if typeof(firePP) == "function" then
+            if firePP then
                 firePP(d, 1)
             else
                 d:InputHoldBegin()
-                task.wait(0.05)
+                task.wait()
                 d:InputHoldEnd()
             end
             return true
         end
     end
-    return false
 end
-local function collectFruit(fruit)
-    if not fruit or not fruit.Parent then return false end
-    if not (fruit:IsA("Model") or fruit:IsA("BasePart")) then return false end
-    return tryProximityPrompts(fruit)
+local function collectFruit(obj)
+    if obj and obj.Parent and not obj:GetAttribute("Favorited") then
+        return tryProximityPrompts(obj)
+    end
 end
--- Tự động thu hoạch cây/trái
 local function autocollect(v)
     collecting = v
+    if not v then return end
     task.spawn(function()
+        local plantsFolder = userfarm.Important.Plants_Physical
         while collecting do
-            local plants = userfarm.Important.Plants_Physical:GetChildren()
-            for _, plant in ipairs(plants) do
+            for _, plant in ipairs(plantsFolder:GetChildren()) do
                 if not collecting then break end
                 if collectDict[plant.Name] then
                     local fruitsFolder = plant:FindFirstChild("Fruits")
                     if fruitsFolder then
-                        local fruits = fruitsFolder:GetChildren()
-                        for _, fruit in ipairs(fruits) do
+                        for _, fruit in ipairs(fruitsFolder:GetChildren()) do
                             if not collecting then break end
-                            if not fruit:GetAttribute("Favorited") then
-                                collectFruit(fruit)
-                                task.wait(0.01)
-                            end
+                            collectFruit(fruit)
                         end
                     else
-                        if not plant:GetAttribute("Favorited") then
-                            collectFruit(plant)
-                            task.wait(0.01)
-                        end
+                        collectFruit(plant)
                     end
                 end
             end
-            task.wait(1.5)
+            task.wait(1)
         end
     end)
 end

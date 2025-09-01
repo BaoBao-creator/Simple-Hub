@@ -38,13 +38,12 @@ end
 -- Các hàm sự kiện
 local function getoffers()
     local fountain = workspace.Interaction.UpdateItems.FairyEvent.WishFountain
-    local offers, n = {}, 0
+    local offers = {}
     for i = 1, 3 do
         local text = fountain["Offering_" .. i].Gui.SurfaceGui.TextLabel.Text
-        local name = text:match("%d+/%d+%s+Glimmering%s+(.+)")
+        local name = string.match(text, "%d+/%d+%s+Glimmering%s+(.+)")
         if name then
-            n += 1
-            offers[n] = name
+            offers[#offers + 1] = name
         end
     end
     return offers

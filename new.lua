@@ -24,6 +24,9 @@ local summertobuylist, spraytobuylist, sprinklertobuylist = {}, {}, {}
 local pettoselllist, pettosellDict = {}, {}
 -- Game Toggle
 local collecting, buying, petselling, collectingFairy = false, false, false, false
+local onlymutation = false
+-- Game data
+local mutationtocollect = nil
 -- Event connection holders
 local petConnection, fairyConnection, antiAFKConnection, noclipConnection
 -- Xác định khu vườn của người chơi
@@ -101,13 +104,13 @@ local function tryProximityPrompts(obj)
         end
     end
 end
-local function isgrownup(object)
-    return object.Grow.Age.Value >= object:GetAttribute("MaxAge")
-end
 local function collectFruit(obj)
-    if obj and obj.Parent and not obj:GetAttribute("Favorited") then
-        return tryProximityPrompts(obj)
+    if obj.Grow.Age.Value >= obj:GetAttribute("MaxAge") then return end
+    if obj:GetAttribute("Favorited") then return end
+    if onlymutation then
+        if not obj:GetAttribute(mutationtocollect) then return end
     end
+    tryProximityPrompts(obj)
 end
 local function autocollect(v)
     collecting = v
@@ -122,14 +125,10 @@ local function autocollect(v)
                     if fruitsFolder then
                         for _, fruit in ipairs(fruitsFolder:GetChildren()) do
                             if not collecting then break end
-                            if isgrownup(fruit) then
-                                collectFruit(fruit)
-                            end
+                            collectFruit(fruit)
                         end
                     else
-                        if isgrownup(plant) then
-                            collectFruit(plant)
-                        end
+                        collectFruit(plant)
                     end
                 end
             end
@@ -305,7 +304,6 @@ local function antiAFK(v)
         end
     end
 end
-
 local function noClip(v)
     if v then
         if not noclipConnection then
@@ -324,7 +322,6 @@ local function noClip(v)
         end
     end
 end
-
 local function clearLag(full)
     local effectClasses = {ParticleEmitter=true, Trail=true, Beam=true, Smoke=true, Fire=true, Sparkles=true}
     local textureClasses = {Decal=true, Texture=true}
@@ -362,7 +359,6 @@ local function clearLag(full)
         lighting.OutdoorAmbient = Color3.new(1,1,1)
     end
 end
-
 -- Hàm hỗ trợ chung
 local function a(list)
     table.insert(list, 1, "All")
@@ -376,7 +372,6 @@ local function isall(v, list)
     end
     return v
 end
-
 -- Tạo UI
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 local Window = Rayfield:CreateWindow({
@@ -416,6 +411,13 @@ local RefreshCollectDropdownButton = FarmTab:CreateButton({
     Name = "Refresh Plant List",
     Callback = function()
         CollectDropdown:Refresh(getmyplantlist())
+    end
+})
+local OnlyMutationToggle = FarmTab:CreateToggle({
+    Name = "Only Mutation",
+    Flag = "OnlyMutationToggle",
+    Callback = function(v)
+        onlymutation = v
     end
 })
 local ShopTab = Window:CreateTab("Shop", 0)

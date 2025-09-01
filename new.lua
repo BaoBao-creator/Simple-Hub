@@ -104,13 +104,20 @@ local function tryProximityPrompts(obj)
         end
     end
 end
-local function collectFruit(obj)
-    if obj.Grow.Age.Value >= obj:GetAttribute("MaxAge") then return end
-    if obj:GetAttribute("Favorited") then return end
-    if onlymutation then
-        if not obj:GetAttribute(mutationtocollect) then return end
+local function iscollectable(obj)
+    if not obj or not obj.Parent then return false end
+    if obj:GetAttribute("Favorited") then return false end
+    local maxAge = obj:GetAttribute("MaxAge")
+    if not maxAge or obj.Grow.Age.Value < maxAge then return false end
+    if onlymutation and mutationtocollect and mutationtocollect ~= "" then
+        if not obj:GetAttribute(mutationtocollect) then return false end
     end
-    tryProximityPrompts(obj)
+    return true
+end
+local function collectFruit(obj)
+    if iscollectable(obj) then
+        tryProximityPrompts(obj)
+    end
 end
 local function autocollect(v)
     collecting = v
@@ -420,7 +427,7 @@ local OnlyMutationToggle = FarmTab:CreateToggle({
         onlymutation = v
     end
 })
-local MutationToCollectInput = Tab:CreateInput({
+local MutationToCollectInput = FarmTab:CreateInput({
     Name = "Mutation To Collect",
     Flag = "MutationToCollectInput",
     Callback = function(v)

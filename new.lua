@@ -24,7 +24,7 @@ local summertobuylist, spraytobuylist, sprinklertobuylist = {}, {}, {}
 local pettoselllist, pettosellDict = {}, {}
 -- Game Toggle
 local collecting, buying, petselling, collectingFairy = false, false, false, false
-local onlymutation = false
+local onlymutation, teleportcollect = false
 -- Game data
 local mutationtocollect = nil
 -- Event connection holders
@@ -104,6 +104,17 @@ local function tryProximityPrompts(obj)
         end
     end
 end
+local function teleportFruitToPlayer(obj)
+    local root = obj.PrimaryPart or obj:FindFirstChildWhichIsA("BasePart")
+    if not root then return end
+    for _, part in ipairs(obj:GetDescendants()) do
+        if part:IsA("BasePart") then
+            part.CanCollide = false
+            part.Transparency = 1
+        end
+    end
+    root.CFrame = humanoidRootPart.CFrame + Vector3.new(0, 2, 0)
+end
 local function iscollectable(obj)
     if not obj or not obj.Parent then return false end
     if obj:GetAttribute("Favorited") then return false end
@@ -116,6 +127,9 @@ local function iscollectable(obj)
 end
 local function collectFruit(obj)
     if iscollectable(obj) then
+        if teleportcollect then
+            teleportFruitToPlayer(obj)
+        end
         tryProximityPrompts(obj)
     end
 end
@@ -401,6 +415,13 @@ local AutoCollectToggle = FarmTab:CreateToggle({
     Flag = "AutoCollectToggle",
     Callback = function(v)
         autocollect(v)
+    end
+})
+local TpFruitToPlayerToggle = FarmTab:CreateToggle({
+    Name = "Remote Collect",
+    Flag = "TpFruitToPlayerToggle",
+    Callback = function(v)
+        teleportcollect = v
     end
 })
 local CollectDropdown = FarmTab:CreateDropdown({

@@ -151,8 +151,14 @@ end
 -- Các hàm Shop (Mua đồ)
 local function mergelists(...)
     local merged = {}
-    for _, list in ipairs({...}) do
-        table.move(list, 1, #list, #merged+1, merged)
+    local lists = {...}
+    local n = 0
+    for i = 1, #lists do
+        local list = lists[i]
+        for j = 1, #list do
+            n = n + 1
+            merged[n] = list[j]
+        end
     end
     return merged
 end

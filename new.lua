@@ -150,14 +150,19 @@ local function getmyplantlist()
 end
 -- Các hàm Shop (Mua đồ)
 local function mergelists(...)
-    local merged = {}
     local lists = {...}
-    local n = 0
+    local total = 0
     for i = 1, #lists do
-        local list = lists[i]
-        for j = 1, #list do
-            n = n + 1
-            merged[n] = list[j]
+        total += #lists[i]
+    end
+    if total == 0 then return {} end
+    local merged = table.create(total)
+    local pos = 1
+    for i = 1, #lists do
+        local t, n = lists[i], #lists[i]
+        if n > 0 then
+            table.move(t, 1, n, pos, merged)
+            pos += n
         end
     end
     return merged

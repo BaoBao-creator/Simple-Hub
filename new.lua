@@ -508,6 +508,13 @@ local Window = Rayfield:CreateWindow({
 })
 -- Tab Event
 local EventTab = Window:CreateTab("Event", 0)
+local AutoCollectFairyToggle = EventTab:CreateToggle({
+    Name = "Auto Collect Fairys",
+    Flag = "AutoCollectFairyToggle",
+    Callback = function(v)
+        autoCollectFairy(v)
+    end
+})
 local FarmTab = Window:CreateTab("Farm", 0)
 local AutoCollectToggle = FarmTab:CreateToggle({
     Name = "Auto Collect Plants Selected",

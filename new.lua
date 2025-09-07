@@ -39,7 +39,7 @@ for _, farm in ipairs(mainfarm:GetChildren()) do
     end
 end
 -- Script Var
-local jobid = nil
+local serverjobid = nil
 -- Các hàm sự kiện
 local function getoffers()
     local fountain = workspace.Interaction.UpdateItems.FairyEvent.WishFountain
@@ -677,23 +677,23 @@ local HopServerWithLowPlayerButton = ServerTab:CreateButton({
         HopServerWithLowPlayer()
     end
 })
-local IdInput = ServerTab:CreateInput({
-    Name = "Server Job Id",
-    Flag = "IdInput",
-    Callback = function(v)
-        jobid = v
+local CopyServerIdButton = ServerTab:CreateButton({
+    Name = "Copy Server Id",
+    Callback = function()
+        CopyServerId()
     end
 })
 local JoinServerButton = ServerTab:CreateButton({
     Name = "Join Server",
     Callback = function()
-        JoinServer(jobid)
+        JoinServer(serverjobid)
     end
 })
-local CopyServerIdButton = ServerTab:CreateButton({
-    Name = "Copy Server Id",
-    Callback = function()
-        CopyServerId()
+local IdInput = ServerTab:CreateInput({
+    Name = "Server Job Id",
+    Flag = "IdInput",
+    Callback = function(v)
+        serverjobid = v
     end
 })
 local RejoinButton = ServerTab:CreateButton({

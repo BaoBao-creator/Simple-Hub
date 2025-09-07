@@ -670,7 +670,7 @@ local HopServerWithLowPlayerButton = ServerTab:CreateButton({
         HopServerWithLowPlayer()
     end
 })
-local IdInput = Tab:CreateInput({
+local IdInput = ServerTab:CreateInput({
     Name = "Server Job Id",
     Flag = "IdInput",
     Callback = function(v)

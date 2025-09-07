@@ -689,11 +689,14 @@ local JoinServerButton = ServerTab:CreateButton({
         JoinServer(serverjobid)
     end
 })
-local IdInput = ServerTab:CreateInput({
+local jobidInput = ServerTab:CreateInput({
     Name = "Server Job Id",
-    Flag = "IdInput",
-    Callback = function(v)
-        serverjobid = v
+    CurrentValue = "",
+    PlaceholderText = "",
+    RemoveTextAfterFocusLost = false,
+    Flag = "jobidInput",
+    Callback = function(Text)
+        serverjobid = Text
     end
 })
 local RejoinButton = ServerTab:CreateButton({

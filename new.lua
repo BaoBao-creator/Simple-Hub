@@ -5,8 +5,11 @@ local VirtualUser = game:GetService("VirtualUser")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 local firePP = rawget(getgenv(), "fireproximityprompt") or _G.fireproximityprompt or fireproximityprompt
+local HttpService = game:GetService("HttpService")
+local TeleportService = game:GetService("TeleportService")
 -- Roblox Data
 local LocalPlayer = Players.LocalPlayer
+local localPlayer = LocalPlayer
 local character = LocalPlayer.Character
 local humanoid = character.Humanoid
 local humanoidRootPart = character.HumanoidRootPart
@@ -287,6 +290,120 @@ local function getmypetlist()
     end
     return pets
 end
+-- Server Functions
+math.randomseed(tick())
+local function getAllServers(placeId)
+    local servers = {}
+    local cursor = nil
+    while true do
+        local url = "https://games.roblox.com/v1/games/" .. placeId .. "/servers/Public?sortOrder=Asc&limit=100"
+        if cursor then
+            url = url .. "&cursor=" .. cursor
+        end
+        local success, result = pcall(function()
+            return HttpService:JSONDecode(HttpService:GetAsync(url))
+        end)
+        if not success or type(result) ~= "table" or not result.data then
+            break
+        end
+        for _, server in ipairs(result.data) do
+            table.insert(servers, server)
+        end
+        cursor = result.nextPageCursor
+        if not cursor then
+            break
+        end
+    end
+    return servers
+end
+local function HopServer()
+    local servers = getAllServers(game.PlaceId)
+    if #servers == 0 then
+        TeleportService:Teleport(game.PlaceId, localPlayer)
+        return
+    end
+    local currentJobId = game.JobId
+    local choices = {}
+    for _, server in ipairs(servers) do
+        if server.id ~= currentJobId and server.playing and server.playing > 0 then
+            table.insert(choices, server)
+        end
+    end
+    if #choices == 0 then
+        TeleportService:Teleport(game.PlaceId, localPlayer)
+        return
+    end
+    local choice = choices[math.random(#choices)]
+    local success, err = pcall(function()
+        TeleportService:TeleportToPlaceInstance(game.PlaceId, choice.id, localPlayer)
+    end)
+    if not success then
+        warn("Teleport failed: " .. tostring(err))
+    end
+end
+local function HopServerWithLowPlayer()
+    local servers = getAllServers(game.PlaceId)
+    if #servers == 0 then
+        TeleportService:Teleport(game.PlaceId, localPlayer)
+        return
+    end
+    local currentJobId = game.JobId
+    local target = nil
+    local minPlayers = math.huge
+    for _, server in ipairs(servers) do
+        if server.id ~= currentJobId and server.playing and server.playing > 0 then
+            if server.playing < minPlayers then
+                minPlayers = server.playing
+                target = server
+            end
+        end
+    end
+    if target then
+        local success, err = pcall(function()
+            TeleportService:TeleportToPlaceInstance(game.PlaceId, target.id, localPlayer)
+        end)
+        if not success then
+            warn("Teleport failed: " .. tostring(err))
+        end
+    else
+        TeleportService:Teleport(game.PlaceId, localPlayer)
+    end
+end
+local function JoinServer(jobId)
+    local success, err = pcall(function()
+        TeleportService:TeleportToPlaceInstance(game.PlaceId, jobId, localPlayer)
+    end)
+    if not success then
+        warn("JoinServer failed: " .. tostring(err))
+    end
+end
+local function CopyServerId()
+    local success, err = pcall(function()
+        setclipboard(game.JobId)
+    end)
+    if not success then
+        print("JobId: " .. tostring(game.JobId))
+    end
+end
+local function Rejoin()
+    if game.PrivateServerId and game.PrivateServerId ~= "" then
+        local success, err = pcall(function()
+            TeleportService:TeleportToPrivateServer(game.PlaceId, game.PrivateServerId, {localPlayer})
+        end)
+        if not success then
+            pcall(function()
+                TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId, localPlayer)
+            end)
+        end
+    else
+        local success, err = pcall(function()
+            TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId, localPlayer)
+        end)
+        if not success then
+            warn("Rejoin failed: " .. tostring(err))
+        end
+    end
+end
 -- Các hàm Misc (khác)
 local function antiAFK(v)
     if v then
@@ -538,6 +655,13 @@ local RefreshPetDropdownButton = SellTab:CreateButton({
     end
 })
 local CraftTab = Window:CreateTab("Craft", 0)
+local ServerTab = Window:CreateTab("Server", 0)
+local HopServerButton = ServerTab:CreateButton({
+    Name = "Hop Server",
+    Callback = function()
+        HopServer()
+    end
+})
 local MiscTab = Window:CreateTab("Misc", 0)
 local AntiAFKToggle = MiscTab:CreateToggle({
     Name = "Anti AFK",

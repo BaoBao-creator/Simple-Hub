@@ -390,7 +390,12 @@ end
 local function Rejoin()
     if game.PrivateServerId and game.PrivateServerId ~= "" then
         local success, err = pcall(function()
-            TeleportService:TeleportToPrivateServer(game.PlaceId, game.PrivateServerId, {localPlayer})
+            TeleportService:TeleportToPrivateServer(
+                game.PlaceId,
+                game.PrivateServerId,
+                {localPlayer},
+                game.PrivateServerAccessCode
+            )
         end)
         if not success then
             pcall(function()

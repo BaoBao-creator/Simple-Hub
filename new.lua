@@ -537,7 +537,7 @@ local CollectDropdown = FarmTab:CreateDropdown({
 local RefreshCollectDropdownButton = FarmTab:CreateButton({
     Name = "Refresh Plant List",
     Callback = function()
-        CollectDropdown:Refresh(getmyplantlist())
+        CollectDropdown:Refresh(a(getmyplantlist()))
     end
 })
 local ShopTab = Window:CreateTab("Shop", 0)
@@ -681,7 +681,7 @@ local IdInput = ServerTab:CreateInput({
     Name = "Server Job Id",
     Flag = "IdInput",
     Callback = function(v)
-        jobid = tonumber(v)
+        jobid = v
     end
 })
 local JoinServerButton = ServerTab:CreateButton({

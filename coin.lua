@@ -28,7 +28,7 @@ MainTab:CreateToggle({
     Name = "Auto Coin",
     CurrentValue = false,
     Flag = "autohealToggle",
-    Callback = autoheal
+    Callback = autocoin
 })
 
 MainTab:CreateSlider({

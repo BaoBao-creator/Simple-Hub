@@ -1,12 +1,13 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local coining = false
 local coindelay = 0.01
-local function autocoin()
-    coining = not coining
+local function autoclick()
+    clicking = not clicking
     task.spawn(function()
-        while coining do
+        while clicking do
             ReplicatedStorage.Events.ClickMoney:FireServer()
-            task.wait(coindelay)
+            ReplicatedStorage.Events.ClickMoney.ClickGem:FireServer()
+            task.wait(delay)
         end
     end)
 end
@@ -25,19 +26,19 @@ local Window = Rayfield:CreateWindow({
 })
 local MainTab = Window:CreateTab("Main", 0)
 MainTab:CreateToggle({
-    Name = "Auto Coin",
+    Name = "Auto Click",
     CurrentValue = false,
     Flag = "autohealToggle",
-    Callback = autocoin
+    Callback = autoclick
 })
 
 MainTab:CreateSlider({
-    Name = "Auto Coin Delay",
+    Name = "Auto Click Delay",
     Range = {0.01, 0.1},
     Increment = 0.01,
     CurrentValue = 0.01,
     Flag = "DelaySlider",
     Callback = function(v)
-        coindelay = v
+        delay = v
     end
 })

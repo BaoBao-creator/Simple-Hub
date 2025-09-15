@@ -4,13 +4,13 @@ local mapsize = 25
 local partssorted = {}
 local worklabel = {}
 local function updateparts()
-  local worklabel = {}
+	worklabel = {}
 	for hang = 1, mapsize do
 		worklabel[hang] = {}
-  end
-  local partssorted = worklabel
+	end
+	partssorted = worklabel
 	local minX, minZ = math.huge, math.huge
-  local parts = partsfolder:GetChildren()
+	local parts = partsfolder:GetChildren()
 	for _, ph in ipairs(parts) do
 		if ph:IsA("BasePart") then
 			local p = ph.Position
@@ -28,7 +28,7 @@ local function updateparts()
 			end
 			local number = ph:FindFirstChild("NumberGui")
 			if number then
-				text = tonumber(number.TextLabel.Text)
+				local text = tonumber(number.TextLabel.Text)
 				if text then
 					worklabel[hang][cot] = text
 				else

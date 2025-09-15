@@ -58,4 +58,5 @@ local function renderWorkLabel()
 	end
 	return table.concat(lines, "\n")
 end
+updateparts()
 print(renderWorkLabel())

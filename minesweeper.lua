@@ -34,7 +34,28 @@ local function updateparts()
 				else
 					worklabel[hang][cot] = 0
 				end
+			else
+				worklabel[hang][cot] = "?"
 			end
 		end
 	end
 end
+local function renderWorkLabel()
+	local lines = {}
+	for hang = 1, mapsize do
+		local row = {}
+		for cot = 1, mapsize do
+			local val = (worklabel[hang] and worklabel[hang][cot])
+			if val == "?" then
+				table.insert(row, "?")
+			elseif val == 0 then
+				table.insert(row, " ")
+			else
+				table.insert(row, tostring(val))
+			end
+		end
+		table.insert(lines, table.concat(row, "|"))
+	end
+	return table.concat(lines, "\n")
+end
+print(renderWorkLabel())

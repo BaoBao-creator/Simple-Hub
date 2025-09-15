@@ -26,10 +26,15 @@ local function updateparts()
 			if hang >= 1 and hang <= mapsize and cot >= 1 and cot <= mapsize then
 				partssorted[hang][cot] = ph
 			end
-      local number = ph:FindFirstChild("NumberGui")
-      if number then
-        text = ph.NumberGui.TextLabel.Text
-        if 
+			local number = ph:FindFirstChild("NumberGui")
+			if number then
+				text = tonumber(number.TextLabel.Text)
+				if text then
+					worklabel[hang][cot] = text
+				else
+					worklabel[hang][cot] = 0
+				end
+			end
 		end
 	end
 end
